@@ -1,3 +1,5 @@
+import edu.wpi.first.gradlerio.GradleRIOPlugin
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id "java"
@@ -7,7 +9,7 @@ plugins {
 }
 
 def javaVersion = JavaVersion.VERSION_17
-def kotlinJvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.@Companion.fromTarget(javaVersion.toString())
+def kotlinJvmTarget = JvmTarget.@Companion.fromTarget(javaVersion.toString())
 
 java {
     sourceCompatibility = javaVersion
@@ -72,6 +74,8 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'org.reflections:reflections:0.10.2'
+
 
     testImplementation platform("org.junit:junit-bom:5.10.1")
     testImplementation "org.junit.jupiter:junit-jupiter-api"
@@ -94,7 +98,7 @@ wpi.sim.addDriverstation()
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     from sourceSets.main.allSource
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
