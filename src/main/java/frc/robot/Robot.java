@@ -5,13 +5,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.hal.FRCNetComm.tInstances;
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
-import edu.wpi.first.hal.HAL;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.util.WPILibVersion;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.utils.RobotTester;
+import frc.robot.utils.SafetyManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -24,8 +24,6 @@ public class Robot extends TimedRobot
     private Command autonomousCommand;
     
     private RobotContainer robotContainer;
-    
-    
     /**
      * This method is run when the robot is first started up and should be used for any
      * initialization code.
@@ -33,12 +31,17 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit()
     {
-        // Report the use of Kotlin for "FRC Usage Report" statistics.
-        // Please only remove if you remove *all* use of Kotlin from the robot.
-        HAL.report(tResourceType.kResourceType_Language, tInstances.kLanguage_Kotlin, 0, WPILibVersion.Version);
-        // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-        // autonomous chooser on the dashboard.
+
         robotContainer = new RobotContainer();
+        new SafetyManager(robotContainer.SafeGuardSystems());
+
+
+        // Start logging data log
+        DataLogManager.start();
+
+        // Record both DS control and joystick data
+        DriverStation.startDataLog(DataLogManager.getLog());
+
     }
     
     
@@ -108,16 +111,17 @@ public class Robot extends TimedRobot
     
     
     @Override
-    public void testInit()
-    {
+    public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+        new RobotTester(robotContainer.TestCommands());
     }
-    
     
     /** This method is called periodically during test mode. */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+
+    }
     
     
     /** This method is called once when the robot is first started up. */
