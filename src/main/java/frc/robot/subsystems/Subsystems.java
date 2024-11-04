@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import frc.robot.subsystems.SubsystemABS;
-
 public enum Subsystems {
     SWERVE_DRIVE("Swerve Drive", "This Subsystem is responsible for controlling the Swerve Drive"),
     INTAKE("Intake", "This Subsystem is responsible for controlling the Intake"),
@@ -15,7 +13,7 @@ public enum Subsystems {
     VISION("Vision", "This Subsystem is responsible for controlling the Vision"),
     WHEEL_OF_FORTUNE("Wheel of Fortune", "This Subsystem is responsible for controlling the Wheel of Fortune"),
     ELEVATOR("Elevator", "This Subsystem is responsible for controlling the Elevator"),
-    TESTER("Tester", "This Subsystem is responsible for controlling the Texter");
+    TESTER("Tester", "This System is responsible for testing the robot");
 
     private final String ntName;
     private final String description;
