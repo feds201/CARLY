@@ -51,7 +51,7 @@ public class elevator extends SubsystemABS {
 
     @Override
     public boolean isHealthy() {
-
+        return false;
     }
 
     public void moveUp(){
