@@ -52,5 +52,11 @@ public class RobotMap {
         public static final int GYRO_PORT = 0;
     }
 
+
+    public static class IntakeMap{
+        //Make sure to change these to correct!
+        public static final int kIntakeWheels = 50;       // Rev
+        public static final int kIntakeWrist = 55;        // Rev
+    }
     // You can add more mappings for other subsystems like intake, shooter, etc.
 }
