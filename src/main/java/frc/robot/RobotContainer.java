@@ -126,11 +126,11 @@ public class RobotContainer {
     }
     public Object[] TestCommands() {
         return new Object[] {
-            new ElevatorMoveLimit(),
-            new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController),
-            new IntakeUntilNoteIn(intakeWheels, intakeIRSensor, driverController, operatorController),
-            new AimToBall(swerveSubsystem, backCamera),
-            new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController)
+            "Move Elevator Up", new ElevatorMoveLimit(),
+            "Deply Intake ", new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController),
+            "Intake Until Note in", new IntakeUntilNoteIn(intakeWheels, intakeIRSensor, driverController, operatorController),
+            "Aim at Ball", new AimToBall(swerveSubsystem, backCamera),
+            "Handoff ", new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController)
         };
     }
 
