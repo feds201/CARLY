@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SwerveConstants;
-import frc.robot.subsystems.SubsystemABS;
-import frc.robot.subsystems.Subsystems;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
+import frc.robot.utils.SubsystemABS;
+import frc.robot.utils.Subsystems;
 
 import java.util.Map;
 
@@ -188,5 +188,12 @@ public class SwerveSubsystem extends SubsystemABS {
                     .withVelocityY(-leftStickX * SwerveConstants.MaxSpeed)
                     .withRotationalRate(output));
         }
+    }
+
+
+    @Override
+    public void Failsafe() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
     }
 }

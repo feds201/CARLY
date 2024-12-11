@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.utils;
 
 public enum Subsystems {
     SWERVE_DRIVE("Swerve Drive", "This Subsystem is responsible for controlling the Swerve Drive"),

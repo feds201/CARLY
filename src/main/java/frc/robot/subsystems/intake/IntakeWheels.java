@@ -9,66 +9,66 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.RobotMap;
-import frc.robot.subsystems.SubsystemABC;
+import frc.robot.utils.SubsystemABS;
+import frc.robot.utils.Subsystems;
 
-public class IntakeWheels extends SubsystemABC {
-  private final CANSparkMax intakeWheel;
+public class IntakeWheels extends SubsystemABS {
+  private CANSparkMax intakeMotor;
+  private DoubleEntry intakeSpeed;
+  private ShuffleboardTab tab;
 
-  private DoubleEntry intakeVoltage;
-
-  /** Creates a new intake. */
-  public IntakeWheels() {
-    super();
-
-    intakeWheel = new CANSparkMax(RobotMap.IntakeMap.kIntakeWheels, MotorType.kBrushless);
-
-    setupNetworkTables("intake");
-
-    intakeVoltage = ntTable.getDoubleTopic("wheels_voltage").getEntry(0);
-
-    setupShuffleboard();
-    seedNetworkTables();
-  }
+public IntakeWheels(Subsystems part, String tabName) {
+  super(part, tabName);
+  tab = getTab();
+  intakeMotor = new CANSparkMax(RobotMap.IntakeMap.INTAKE_MOTOR, MotorType.kBrushless);
+  intakeSpeed = ntTable.getDoubleTopic("wheels_voltage").getEntry(0);
+}
 
   @Override
-  public void setupShuffleboard() {
-
-  }
+  public void init() {}
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    writePeriodicOutputs();
-
-    SmartDashboard.putNumber("intake bus voltage", intakeWheel.getBusVoltage());
-    SmartDashboard.putNumber("intake motor temperature", intakeWheel.getMotorTemperature());
-  }
-
-  @Override
-  public void writePeriodicOutputs() {
+    // TODO Auto-generated method stub
+    SmartDashboard.putNumber("intake bus voltage", intakeMotor.getBusVoltage());
+    SmartDashboard.putNumber("intake motor temperature", intakeMotor.getMotorTemperature());
+    throw new UnsupportedOperationException("Unimplemented method 'periodic'");
 
   }
 
   @Override
-  public void seedNetworkTables() {
-    setIntakeWheels(0);
-    getIntakeWheels();
+  public void simulationPeriodic() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'simulationPeriodic'");
   }
 
-  // GETTERS
-  public double getIntakeWheels() {
-    return intakeVoltage.get();
+  @Override
+  public void setDefaultCommand() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setDefaultCommand'");
   }
 
-  private DoubleLogEntry intakeVoltageLog = new DoubleLogEntry(log, "/intake/target");
-
-  // SETTERS
-  public void setIntakeWheels(double voltage) {
-    intakeVoltage.set(voltage);
-    intakeVoltageLog.append(voltage);
-
-    intakeWheel.set(voltage);
+  @Override
+  public boolean isHealthy() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isHealthy'");
   }
+
+  @Override
+  public void Failsafe() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
+  }
+
+  public void setMotorSpeed(double speed){
+    intakeMotor.set(speed);
+    intakeSpeed.set(speed);
+  }
+
+  
+  
 }

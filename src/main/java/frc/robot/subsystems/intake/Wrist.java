@@ -13,13 +13,15 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.RobotMap;
+import frc.robot.utils.SubsystemABS;
 import frc.robot.constants.DIOConstants;
 import frc.robot.constants.IntakeConstants;
-import frc.robot.subsystems.SubsystemABC;
 
-public class Wrist extends SubsystemABC {
+
+public class Wrist extends SubsystemABS {
   private final CANSparkMax wristRotation;
   private final DutyCycleEncoder wristRotationEncoder;
 
@@ -34,12 +36,13 @@ public class Wrist extends SubsystemABC {
 
   private BooleanEntry failure;
   private BooleanEntry towardShooter;
+  private ShuffleboardTab tab;
 
   /** Creates a new intake. */
   public Wrist() {
     super();
-
-    wristRotation = new CANSparkMax(RobotMap.IntakeMap.kIntakeWrist, MotorType.kBrushless);
+    tab = getTab();
+    wristRotation = new CANSparkMax(RobotMap.IntakeMap.INTAKE_WRIST, MotorType.kBrushless);
     wristRotationEncoder = new DutyCycleEncoder(DIOConstants.Intake.kIntakeRotateEncoder);
 
     setupNetworkTables("intake");
@@ -53,8 +56,9 @@ public class Wrist extends SubsystemABC {
 
     wristRotationEncoder.setPositionOffset(0);
 
-    setupShuffleboard();
-    seedNetworkTables();
+      tab.add("PID Controller", pid);
+    tab.add("AMP Pid Controller", pidAmp);
+   
   }
 
 
@@ -62,12 +66,7 @@ public class Wrist extends SubsystemABC {
     return false;
   }
 
-  @Override
-  public void setupShuffleboard() {
-    
-    tab.add("PID Controller", pid);
-    tab.add("AMP Pid Controller", pidAmp);
-  }
+
 
   @Override
   public void periodic() {
@@ -77,20 +76,12 @@ public class Wrist extends SubsystemABC {
     }
 
     // This method will be called once per scheduler run
-    writePeriodicOutputs();
-  }
-
-  @Override
-  public void writePeriodicOutputs() {
     readWristAngle();
     readIntakeEncoder();
   }
 
-  @Override
-  public void seedNetworkTables() {
-    setWristVoltage(0);
-    getWristVoltage();
-  }
+ 
+  
 
   public void rotateWristPID() {
     double output = pid.calculate(getWristAngle());
@@ -135,17 +126,17 @@ public class Wrist extends SubsystemABC {
     return failure.get();
   }
 
-  private DoubleLogEntry wristVoltageLog = new DoubleLogEntry(log, "/intake/output");
-  private DoubleLogEntry rotationEncoderValueLog = new DoubleLogEntry(log, "/intake/rotationValue");
-  private DoubleLogEntry rotationAngleLog = new DoubleLogEntry(log, "/intake/rotationAngle");
-  private DoubleLogEntry rotationTargetLog = new DoubleLogEntry(log, "/intake/rotationTarget");
-  private BooleanLogEntry failureLog = new BooleanLogEntry(log, "/intake/failure");
-  private BooleanLogEntry towardShooterLog = new BooleanLogEntry(log, "/intake/towardShooter");
+  // private DoubleLogEntry wristVoltageLog = new DoubleLogEntry(log, "/intake/output");
+  // private DoubleLogEntry rotationEncoderValueLog = new DoubleLogEntry(log, "/intake/rotationValue");
+  // private DoubleLogEntry rotationAngleLog = new DoubleLogEntry(log, "/intake/rotationAngle");
+  // private DoubleLogEntry rotationTargetLog = new DoubleLogEntry(log, "/intake/rotationTarget");
+  // private BooleanLogEntry failureLog = new BooleanLogEntry(log, "/intake/failure");
+  // private BooleanLogEntry towardShooterLog = new BooleanLogEntry(log, "/intake/towardShooter");
 
   // SETTERS
   public void setWristVoltage(double voltage) {
     wristVoltage.set(voltage);
-    wristVoltageLog.append(voltage);
+    // wristVoltageLog.append(voltage);
 
     if (voltage > 0) {
       setTowardIntake(false);
@@ -185,7 +176,7 @@ public class Wrist extends SubsystemABC {
     SmartDashboard.putNumber("Wrist after wrap around check", rotationAngleValue);
 
     rotationAngle.set(rotationAngleValue);
-    rotationAngleLog.append(rotationAngleValue);
+    // rotationAngleLog.append(rotationAngleValue);
   }
 
   public void readIntakeEncoder() {
@@ -196,27 +187,62 @@ public class Wrist extends SubsystemABC {
       rotationValue += 1;
     }
     rotationEncoderValue.set(rotationValue);
-    rotationEncoderValueLog.append(rotationValue);
+    // rotationEncoderValueLog.append(rotationValue);
   }
 
   public void setTarget(double target) {
     rotationTarget.set(target);
-    rotationTargetLog.append(target);
+    // rotationTargetLog.append(target);
   }
   public void setTargetAMP(double target) {
     rotationTarget.set(target);
-    rotationTargetLog.append(target);
+    // rotationTargetLog.append(target);
   }
 
   public void setFailure(boolean failureValue) {
     failure.set(failureValue);
-    failureLog.append(failureValue);
+    // failureLog.append(failureValue);
   }
 
   public void setTowardIntake(boolean state) {
     towardShooter.set(state);
-    towardShooterLog.append(state);
+    // towardShooterLog.append(state);
 
+  }
+
+
+  @Override
+  public void init() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'init'");
+  }
+
+
+  @Override
+  public void simulationPeriodic() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'simulationPeriodic'");
+  }
+
+
+  @Override
+  public void setDefaultCommand() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setDefaultCommand'");
+  }
+
+
+  @Override
+  public boolean isHealthy() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isHealthy'");
+  }
+
+
+  @Override
+  public void Failsafe() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
   }
 }
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.utils;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -25,6 +25,10 @@ public abstract class SubsystemABS extends SubsystemBase {
         init();
         instance = this;
 
+
+    }
+
+    public SubsystemABS() {
 
     }
 
@@ -59,4 +63,6 @@ public abstract class SubsystemABS extends SubsystemBase {
     public abstract void setDefaultCommand();
 
     public abstract  boolean isHealthy();
+
+    public abstract void Failsafe();
 }

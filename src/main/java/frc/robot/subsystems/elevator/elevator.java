@@ -8,11 +8,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.subsystems.SubsystemABS;
-import frc.robot.subsystems.Subsystems;
+import frc.robot.utils.SubsystemABS;
+import frc.robot.utils.Subsystems;
 
 public class elevator extends SubsystemABS {
   /** Creates a new elevator. */
@@ -60,6 +59,12 @@ public class elevator extends SubsystemABS {
 
     public void moveDown(){
         elevatorMotor.set(-1 * ElevatorConstants.kElevatorSpeed);
+    }
+
+    @Override
+    public void Failsafe() {
+      // TODO Auto-generated method stub
+      throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
     }
 
 

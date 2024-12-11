@@ -5,53 +5,68 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.constants.DIOConstants.*;
-import frc.robot.subsystems.SubsystemABC;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.utils.SubsystemABS;
+import frc.robot.utils.Subsystems;
 
-public class IntakeIRSensor extends SubsystemABC {
+public class IntakeIRSensor extends SubsystemABS {
   /** Creates a new BreakBeamSensor. */
   // private final DigitalInput transmitter;
   private final DigitalInput receiverIntake;
-  private final BooleanEntry beamBrokenIntake;
+  private final NetworkTableEntry beamBrokenIntake;
+  private final ShuffleboardTab tab;
+  private final NetworkTableEntry nTableEntry;
+ 
+  public IntakeIRSensor(Subsystems part, String tabName) {
+    super(part, tabName);  
+    tab = getTab();
+    receiverIntake = new DigitalInput(0);
+    setupNetworkTables(tabName);
+    nTableEntry = ntTable.getEntry("Intake IR Sensor"); 
+    beamBrokenIntake = ntTable.getEntry(tabName);
+    
+  }
 
-  public IntakeIRSensor() {
-    setupNetworkTables("irsensor_intake");
+  public boolean getBeamBroken() {
+    return receiverIntake.get();
+  }
+  
 
-    // transmitter = new DigitalInput(SensorConstants.breakBeamTransmitterPort);
-    receiverIntake = new DigitalInput(SensorConstants.intakeBreakBeamReceiverPort);
-
-    beamBrokenIntake = ntTable.getBooleanTopic("intake_loaded").getEntry(true);
-
-    setupShuffleboard();
-    seedNetworkTables();
+  @Override
+  public void init() {
+    
   }
 
   @Override
-  public void setupShuffleboard() {
-    tab.add("BreakBeam", receiverIntake);
+  public void simulationPeriodic() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'simulationPeriodic'");
+  }
+
+  @Override
+  public void setDefaultCommand() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setDefaultCommand'");
+  }
+
+  @Override
+  public boolean isHealthy() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isHealthy'");
+  }
+
+  @Override
+  public void Failsafe() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
   }
 
   @Override
   public void periodic() {
-    writePeriodicOutputs();
-  }
-
-  @Override
-  public void seedNetworkTables() {
-  }
-
-  @Override
-  public void writePeriodicOutputs() {
-    readBeamBroken();
-  }
-
-  public void readBeamBroken() {
-    beamBrokenIntake.set(!receiverIntake.get());
-  }
-
-  public boolean getBeamBroken() {
-    return beamBrokenIntake.get();
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'periodic'");
   }
 
 }

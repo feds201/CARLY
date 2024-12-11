@@ -29,14 +29,14 @@ public class RunIntakeWheels extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    c_intake.setIntakeWheels(c_intakeVoltage.getAsDouble());
+    c_intake.setMotorSpeed(c_intakeVoltage.getAsDouble());
     
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    c_intake.setIntakeWheels(0);
+    c_intake.setMotorSpeed(0);
   }
 
   // Returns true when the command should end.
