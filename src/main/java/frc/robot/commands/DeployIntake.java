@@ -23,12 +23,12 @@ public class DeployIntake extends SequentialCommandGroup {
                         IntakeIRSensor breakBeamSensorIntake, CommandXboxController driver, CommandXboxController operator) {
         addCommands(
             new ParallelDeadlineGroup(
-                new RotateWristToPosition(wrist, IntakeConstants.WristPID.kWristNotePosition),
+                new RotateWristToPosition(wrist, IntakeConstants.WristPID.kWristFloorPosition),
                 new RunIntakeWheels(intakeWheels, () -> IntakeConstants.kIntakeNoteWheelSpeed)
                ),
             new IntakeUntilNoteIn(intakeWheels, breakBeamSensorIntake, driver, operator),
             new ParallelDeadlineGroup(
-                new RotateWristToPosition(wrist, IntakeConstants.WristPID.kWristShooterFeederSetpoint),
+                new RotateWristToPosition(wrist, IntakeConstants.WristPID.kWristHandoffPosition),
                 new RunIntakeWheels(intakeWheels, () -> 0)
                ));
     }

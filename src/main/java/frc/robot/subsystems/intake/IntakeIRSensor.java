@@ -42,31 +42,28 @@ public class IntakeIRSensor extends SubsystemABS {
   @Override
   public void simulationPeriodic() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'simulationPeriodic'");
+   
   }
 
   @Override
   public void setDefaultCommand() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setDefaultCommand'");
+    
   }
 
   @Override
   public boolean isHealthy() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isHealthy'");
+  return true;
   }
 
   @Override
   public void Failsafe() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
   }
 
   @Override
   public void periodic() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'periodic'");
   }
 
 }
