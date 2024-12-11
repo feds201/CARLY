@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.vision.VisionABC;
 import frc.robot.subsystems.vision.VisionVariables;
-import frc.robot.subsystems.vision.utils.LimelightHelpers;
-import frc.robot.subsystems.vision.utils.ObjectType;
 import frc.robot.subsystems.vision.utils.VisionObject;
+import frc.robot.utils.LimelightHelpers;
+import frc.robot.utils.ObjectType;
 import frc.robot.constants.RobotMap;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
@@ -26,16 +26,13 @@ public class Back_Camera extends VisionABC {
 		public static String nt_key;
 		private static final ShuffleboardTab tab = Shuffleboard.getTab("FrontCamera");
 		public static NetworkTable table;
-//		public static CommandSwerveDrivetrain drivetrain;
 		public static VisionObject tagCenter;
-//		public static VisionObject tagSide;
+
 		public Random random = new Random();
 		public Back_Camera() {
-//				Back_Camera.drivetrain = drivetrain;
 				nt_key = RobotMap.VisionMap.BackCam.BACK_CAMERA_NETWORK_TABLES_NAME;
 				table = NetworkTableInstance.getDefault().getTable(nt_key);
-				tagCenter = new VisionObject(0, 0, 0, ObjectType.APRILTAG);
-//				tagSide = new VisionObject(0, 0, 0, ObjectType.APRILTAG);
+				tagCenter = new VisionObject(0, 0, 0, ObjectType.APRIL_TAG);
 		}
 
 		private final static Back_Camera INSTANCE = new Back_Camera();
@@ -52,18 +49,10 @@ public class Back_Camera extends VisionABC {
 						random.nextDouble() * 100,
 						random.nextDouble() * 360
 				);
-//				tagSide.update(
-//						random.nextDouble() * 100,
-//						random.nextDouble() * 100,
-//						random.nextDouble() * 360
-//				);
 				Periodic();
 		}
 		@Override
 		public void periodic() {
-
-//				updateTag(LimelightHelpers.getLatestResults(nt_key));
-
 				tagCenter.update(
 						table.getEntry("tx").getNumber(0).doubleValue(),
 						table.getEntry("ty").getNumber(0).doubleValue(),
@@ -72,12 +61,6 @@ public class Back_Camera extends VisionABC {
 				Periodic();
 		}
 
-		private void updateTag(LimelightHelpers.LimelightResults latestResults) {
-//				drivetrain.addVisionMeasurement(latestResults.targetingResults.getBotPose2d() , latestResults.targetingResults.timestamp_LIMELIGHT_publish);
-				LimelightHelpers.LimelightTarget_Fiducial[] tagsresults = latestResults.targetingResults.targets_Fiducials;
-
-//				System.out.print(tagsresults);
-		}
 
 		@Override
 		public boolean CheckTarget() {
@@ -86,7 +69,6 @@ public class Back_Camera extends VisionABC {
 
 		@Override
 		public Translation2d GetTarget(VisionObject object) {
-//				return new Translation2d(tag.getX(), tag.getY());
 				return new Translation2d(0, 0);
 		}
 

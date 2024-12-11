@@ -1,0 +1,14 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Intake/AMP Pid Controller": "PIDController",
+      "/Shuffleboard/Intake/PID Controller": "PIDController",
+      "/Shuffleboard/intake/AMP Pid Controller": "PIDController",
+      "/Shuffleboard/intake/PID Controller": "PIDController"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}

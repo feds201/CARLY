@@ -9,10 +9,13 @@ public class IntakeConstants {
     public final static double kD = 0.0;
     public final static double kIZone = Double.POSITIVE_INFINITY;
     public final static double kRotationTolerance = 10;
+
+    /*TODO: Change these values after testing with Carly Intake */
     public static final double kSpitOutPosition = 201;
-    public final static double kWristNotePosition = 308;
-    public final static double kWristIdlePosition = 88;
-    public  final static  double kAmpPosition = 223;
+    public final static double kWristFloorPosition = 308;
+    public final static double kWristHandoffPosition = 308;
+   
+    
     public final static double kWristShooterFeederSetpoint = 94; // TODO: Ideally all of the above positions should be based on this "home" position so we only have to change this
     public static double kWristOutOfTheWay = 150;
       

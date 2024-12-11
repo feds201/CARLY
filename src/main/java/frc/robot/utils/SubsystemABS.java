@@ -25,7 +25,6 @@ public abstract class SubsystemABS extends SubsystemBase {
         init();
         instance = this;
 
-
     }
 
     public SubsystemABS() {
@@ -41,6 +40,7 @@ public abstract class SubsystemABS extends SubsystemBase {
     }
 
     public ShuffleboardTab getTab() {
+        
         return tab;
     }
 

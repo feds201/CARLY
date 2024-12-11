@@ -64,7 +64,6 @@ public class elevator extends SubsystemABS {
     @Override
     public void Failsafe() {
       // TODO Auto-generated method stub
-      throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
     }
 
 

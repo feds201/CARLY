@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.RobotMap;
 import frc.robot.utils.SubsystemABS;
+import frc.robot.utils.Subsystems;
 import frc.robot.constants.DIOConstants;
 import frc.robot.constants.IntakeConstants;
 
@@ -39,8 +40,8 @@ public class Wrist extends SubsystemABS {
   private ShuffleboardTab tab;
 
   /** Creates a new intake. */
-  public Wrist() {
-    super();
+  public Wrist(Subsystems part, String tabName) {
+    super(part, tabName);
     tab = getTab();
     wristRotation = new CANSparkMax(RobotMap.IntakeMap.INTAKE_WRIST, MotorType.kBrushless);
     wristRotationEncoder = new DutyCycleEncoder(DIOConstants.Intake.kIntakeRotateEncoder);
@@ -214,35 +215,36 @@ public class Wrist extends SubsystemABS {
   @Override
   public void init() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'init'");
+    
   }
 
 
   @Override
   public void simulationPeriodic() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'simulationPeriodic'");
+    
   }
 
 
   @Override
   public void setDefaultCommand() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setDefaultCommand'");
+    
   }
 
 
   @Override
   public boolean isHealthy() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isHealthy'");
+    return true;
+    
   }
 
 
   @Override
   public void Failsafe() {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'Failsafe'");
+    
   }
 }
 
