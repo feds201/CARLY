@@ -10,24 +10,18 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.util.datalog.BooleanLogEntry;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.constants.RobotMap;
+import frc.robot.constants.RobotMap.IntakeMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
-import frc.robot.constants.DIOConstants;
-import frc.robot.constants.IntakeConstants;
 
 
 public class Wrist extends SubsystemABS {
-  private final CANSparkMax wristRotation;
-  private final DutyCycleEncoder wristRotationEncoder;
+  private CANSparkMax wristRotation;
+  private DutyCycleEncoder wristRotationEncoder;
 
-  private final PIDController pid = IntakeConstants.WristPID.GetWristPID();
-  private final PIDController pidAmp = IntakeConstants.WristPID.GetWristAmpPID();
+  private PIDController pid = IntakeMap.WristPID.getWristPID();
  
 
   private DoubleEntry wristVoltage;
@@ -38,15 +32,13 @@ public class Wrist extends SubsystemABS {
   private BooleanEntry failure;
   private BooleanEntry towardShooter;
   private ShuffleboardTab tab;
+  private double rawEncoderValue;
+  private double rotationAngleValue;
 
-  /** Creates a new intake. */
+
   public Wrist(Subsystems part, String tabName) {
     super(part, tabName);
     tab = getTab();
-    wristRotation = new CANSparkMax(RobotMap.IntakeMap.INTAKE_WRIST, MotorType.kBrushless);
-    wristRotationEncoder = new DutyCycleEncoder(DIOConstants.Intake.kIntakeRotateEncoder);
-
-    setupNetworkTables("intake");
 
     wristVoltage = ntTable.getDoubleTopic("wrist_voltage").getEntry(0);
     rotationEncoderValue = ntTable.getDoubleTopic("rotation_value").getEntry(0);
@@ -56,15 +48,29 @@ public class Wrist extends SubsystemABS {
     towardShooter = ntTable.getBooleanTopic("toward_shooter").getEntry(false);
 
     wristRotationEncoder.setPositionOffset(0);
+    rawEncoderValue = wristRotationEncoder.get();
+    rotationAngleValue = rawEncoderValue * 360;
 
-      tab.add("PID Controller", pid);
-    tab.add("AMP Pid Controller", pidAmp);
-   
+    tab.add("Wrist Encoder Value", rawEncoderValue);
+    tab.add("Wrist Angle Raw (enc * 360)", rawEncoderValue * 360);
+    tab.add("Wrist Abs Position/ Position", wristRotationEncoder.getAbsolutePosition());
+    tab.add("Wrist Abs Position/ Offset", wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset());
+    tab.add("Wrist Angle Position/ Position", wristRotationEncoder.getAbsolutePosition() * 360);
+    tab.add("Wrist Angle Position/ Offset", (wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset()) * 360);
+    tab.add("Wrist after wrap around check", rotationAngleValue);
+    if (rawEncoderValue < 0) {
+      tab.add("Encoder negative", rawEncoderValue * 180 + 360);
+    } else {
+      tab.add("Encoder positive", rawEncoderValue * 180);
+    }
   }
 
 
-  public boolean isSafe() {
-    return false;
+  @Override
+  public void init() {
+    wristRotation = new CANSparkMax(IntakeMap.INTAKE_WRIST, MotorType.kBrushless);
+    wristRotationEncoder = new DutyCycleEncoder(IntakeMap.SensorConstants.INTAKE_ROTATE_ENCODER);
+    
   }
 
 
@@ -75,7 +81,6 @@ public class Wrist extends SubsystemABS {
      if(!wristRotationEncoder.isConnected()) {
       wristRotation.setVoltage(0);
     }
-
     // This method will be called once per scheduler run
     readWristAngle();
     readIntakeEncoder();
@@ -88,19 +93,12 @@ public class Wrist extends SubsystemABS {
     double output = pid.calculate(getWristAngle());
     setWristVoltage(output);
   }
-  public void rotateWristPIDAMP() {
-    double output = pidAmp.calculate(getWristAngle());
-    setWristVoltage(output);
-  }
 
   public void setPIDTarget(double target) {
     setTarget(target);
     pid.setSetpoint(target);
   }
-  public void setPIDTargetAMP(double target) {
-    setTargetAMP(target);
-    pidAmp.setSetpoint(target);
-  }
+
 
   public boolean pidAtSetpoint() {
     return pid.atSetpoint();
@@ -127,12 +125,6 @@ public class Wrist extends SubsystemABS {
     return failure.get();
   }
 
-  // private DoubleLogEntry wristVoltageLog = new DoubleLogEntry(log, "/intake/output");
-  // private DoubleLogEntry rotationEncoderValueLog = new DoubleLogEntry(log, "/intake/rotationValue");
-  // private DoubleLogEntry rotationAngleLog = new DoubleLogEntry(log, "/intake/rotationAngle");
-  // private DoubleLogEntry rotationTargetLog = new DoubleLogEntry(log, "/intake/rotationTarget");
-  // private BooleanLogEntry failureLog = new BooleanLogEntry(log, "/intake/failure");
-  // private BooleanLogEntry towardShooterLog = new BooleanLogEntry(log, "/intake/towardShooter");
 
   // SETTERS
   public void setWristVoltage(double voltage) {
@@ -149,35 +141,11 @@ public class Wrist extends SubsystemABS {
   }
 
   public void readWristAngle() {
-    double rawEncoderValue = wristRotationEncoder.get();
-    double rotationAngleValue = rawEncoderValue * 360;
+    
 
-    SmartDashboard.putNumber("Wrist Encoder Value", rawEncoderValue);
-    SmartDashboard.putNumber("Wrist Angle Raw (enc * 360)", rawEncoderValue * 360);
-
-    SmartDashboard.putNumber("Wrist Abs Position", wristRotationEncoder.getAbsolutePosition());
-    SmartDashboard.putNumber("Wrist Abs Position W/ Offset",
-        wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset());
-    SmartDashboard.putNumber("Wrist Angle Position", wristRotationEncoder.getAbsolutePosition() * 360);
-    SmartDashboard.putNumber("Wrist Angle Position W/ Offset",
-        (wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset()) * 360);
-
-    if (rawEncoderValue < 0) {
-      SmartDashboard.putNumber("Encoder negative", rawEncoderValue * 180 + 360);
-    } else {
-      SmartDashboard.putNumber("Encoder positive", rawEncoderValue * 180);
-    }
-
-    // if(rotationAngleValue > 300) {
-    // rotationAngleValue -= 360;
-    // } else if (rotationAngleValue < -50) {
-    // rotationAngleValue += 360;
-    // }
-
-    SmartDashboard.putNumber("Wrist after wrap around check", rotationAngleValue);
+    
 
     rotationAngle.set(rotationAngleValue);
-    // rotationAngleLog.append(rotationAngleValue);
   }
 
   public void readIntakeEncoder() {
@@ -193,49 +161,34 @@ public class Wrist extends SubsystemABS {
 
   public void setTarget(double target) {
     rotationTarget.set(target);
-    // rotationTargetLog.append(target);
   }
   public void setTargetAMP(double target) {
     rotationTarget.set(target);
-    // rotationTargetLog.append(target);
   }
 
   public void setFailure(boolean failureValue) {
     failure.set(failureValue);
-    // failureLog.append(failureValue);
   }
 
   public void setTowardIntake(boolean state) {
     towardShooter.set(state);
-    // towardShooterLog.append(state);
 
   }
 
-
-  @Override
-  public void init() {
-    // TODO Auto-generated method stub
-    
-  }
 
 
   @Override
   public void simulationPeriodic() {
-    // TODO Auto-generated method stub
-    
   }
 
 
   @Override
   public void setDefaultCommand() {
-    // TODO Auto-generated method stub
-    
   }
 
 
   @Override
   public boolean isHealthy() {
-    // TODO Auto-generated method stub
     return true;
     
   }
@@ -243,7 +196,7 @@ public class Wrist extends SubsystemABS {
 
   @Override
   public void Failsafe() {
-    // TODO Auto-generated method stub
+    wristRotation.set(0);
     
   }
 }

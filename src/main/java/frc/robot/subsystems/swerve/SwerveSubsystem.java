@@ -1,8 +1,6 @@
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -10,35 +8,25 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.RobotMap;
 import frc.robot.constants.SwerveConstants;
-import frc.robot.subsystems.swerve.generated.TunerConstants;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
+import frc.robot.utils.DrivetrainConstants;
 
 import java.util.Map;
 
 public class SwerveSubsystem extends SubsystemABS {
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
 
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(SwerveConstants.MaxSpeed * 0.1)
-            .withRotationalDeadband(SwerveConstants.MaxAngularRate * 0.1)
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
-
-    private final SwerveRequest.FieldCentricFacingAngle autoAim = new SwerveRequest.FieldCentricFacingAngle()
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
-
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private ShuffleboardTab tab;
     private String tabName;
     private final Pigeon2 pigeonIMU;
     private CommandXboxController driverController;
-
-    public SwerveSubsystem(Subsystems part , String tabName , int pigeonIMUID , CommandXboxController driverController) {
-        super(part , tabName);
+    public CommandSwerveDrivetrain drivetrain;
+    public SwerveSubsystem(Subsystems part, String tabName, int pigeonIMUID, CommandXboxController driverController) {
+        super(part, tabName);
         this.tabName = tabName;
-        this.pigeonIMU = new Pigeon2(pigeonIMUID);  // Initialize Pigeon IMU
+        this.pigeonIMU = new Pigeon2(pigeonIMUID); // Initialize Pigeon IMU
         this.driverController = driverController;
+        this.drivetrain = DrivetrainConstants.drivetrain;
     }
 
     @Override
@@ -56,7 +44,7 @@ public class SwerveSubsystem extends SubsystemABS {
         // Simulation-specific periodic tasks
     }
 
-    public double applyDeadband(double value , double deadband) {
+    public double applyDeadband(double value, double deadband) {
         return Math.abs(value) > deadband ? value : 0;
     }
 
@@ -66,7 +54,7 @@ public class SwerveSubsystem extends SubsystemABS {
 
     @Override
     public void setDefaultCommand() {
-        drivetrain.setDefaultCommand(new GenericDrivetrain(driverController));
+        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController));
     }
 
     @Override
@@ -75,31 +63,35 @@ public class SwerveSubsystem extends SubsystemABS {
     }
 
     public void setBetaDefaultCommand() {
-        drivetrain.setDefaultCommand(new FODC(driverController));
+        DrivetrainConstants.drivetrain.setDefaultCommand(new FODC(driverController));
     }
 
     public void stop() {
-        drivetrain.setControl(brake);
+        DrivetrainConstants.drivetrain.setControl(DrivetrainConstants.brake);
     }
 
     public void printcontroller() {
-        tab.addNumber(tabName + "/Left Y" , () -> applyDeadband(driverController.getLeftY() , 0.10));
-        tab.addNumber(tabName + "/Left X" , () -> applyDeadband(driverController.getLeftX() , 0.10));
-        tab.addNumber(tabName + "/Right X" , () -> applyDeadband(driverController.getRightX() , 0.10));
-        tab.addNumber(tabName + "/Right Y" , () -> applyDeadband(driverController.getRightY() , 0.10));
-        tab.addNumber(tabName + "/Left Trigger" , () -> applyDeadband(driverController.getLeftTriggerAxis() , 0.10));
-        tab.addNumber(tabName + "/Right Trigger" , () -> applyDeadband(driverController.getRightTriggerAxis() , 0.10));
-        tab.addBoolean(tabName + "/Left Bumper" , driverController.leftBumper());
-        tab.addBoolean(tabName + "/Right Bumper" , driverController.rightBumper());
-        tab.addBoolean(tabName + "/A Button" , driverController.a());
-        tab.addBoolean(tabName + "/B Button" , driverController.b());
-        tab.addBoolean(tabName + "/X Button" , driverController.x());
-        tab.addBoolean(tabName + "/Y Button" , driverController.y());
-        tab.addBoolean(tabName + "/Start Button" , driverController.start());
-        tab.addBoolean(tabName + "/Back Button" , driverController.back());
+        try{
+        tab.addNumber(tabName + "/Left Y", () -> applyDeadband(driverController.getLeftY(), 0.10));
+        tab.addNumber(tabName + "/Left X", () -> applyDeadband(driverController.getLeftX(), 0.10));
+        tab.addNumber(tabName + "/Right X", () -> applyDeadband(driverController.getRightX(), 0.10));
+        tab.addNumber(tabName + "/Right Y", () -> applyDeadband(driverController.getRightY(), 0.10));
+        tab.addNumber(tabName + "/Left Trigger", () -> applyDeadband(driverController.getLeftTriggerAxis(), 0.10));
+        tab.addNumber(tabName + "/Right Trigger", () -> applyDeadband(driverController.getRightTriggerAxis(), 0.10));
+        tab.addBoolean(tabName + "/Left Bumper", driverController.leftBumper());
+        tab.addBoolean(tabName + "/Right Bumper", driverController.rightBumper());
+        tab.addBoolean(tabName + "/A Button", driverController.a());
+        tab.addBoolean(tabName + "/B Button", driverController.b());
+        tab.addBoolean(tabName + "/X Button", driverController.x());
+        tab.addBoolean(tabName + "/Y Button", driverController.y());
+        tab.addBoolean(tabName + "/Start Button", driverController.start());
+        tab.addBoolean(tabName + "/Back Button", driverController.back());
+        } catch (Exception e) {
+            
+        }
     }
 
-    public double snapToNearestLine(double angle , int i) {
+    public double snapToNearestLine(double angle, int i) {
         double snapAngle = 360.0 / RobotMap.SafetyMap.FODC.LineCount;
         return Math.round(angle / snapAngle) * snapAngle;
     }
@@ -109,7 +101,7 @@ public class SwerveSubsystem extends SubsystemABS {
         private final CommandXboxController driverController;
 
         public GenericDrivetrain(CommandXboxController driverController) {
-            addRequirements(drivetrain);
+            addRequirements(DrivetrainConstants.drivetrain);
             this.driverController = driverController;
             printcontroller();
         }
@@ -118,20 +110,19 @@ public class SwerveSubsystem extends SubsystemABS {
         public void execute() {
             super.execute();
             // Apply Deadband to the controller inputs
-            double rightStickX = applyDeadband(driverController.getRightX() , 0.05);
-            double rightStickY = applyDeadband(driverController.getRightY() , 0.05);
-            double leftStickX = applyDeadband(driverController.getLeftX() , 0.05);
-
+            double rightStickX = applyDeadband(driverController.getRightX(), 0.05);
+            double rightStickY = applyDeadband(driverController.getRightY(), 0.05);
+            double leftStickX = applyDeadband(driverController.getLeftX(), 0.05);
 
             new ParallelCommandGroup(
-                    drivetrain.applyRequest(() -> drive
-                            .withVelocityX(-rightStickY * RobotMap.SafetyMap.kMaxSpeed * SwerveConstants.MaxSpeed * RobotMap.SafetyMap.kMaxSpeedChange)
-                            .withVelocityY(-rightStickX * RobotMap.SafetyMap.kMaxSpeed * SwerveConstants.MaxSpeed * RobotMap.SafetyMap.kMaxSpeedChange)
-                            .withRotationalRate(leftStickX * SwerveConstants.MaxAngularRate))
-            );
+                    DrivetrainConstants.drivetrain.applyRequest(() -> DrivetrainConstants.drive
+                            .withVelocityX(
+                                    -rightStickY * RobotMap.SafetyMap.kMaxSpeed * RobotMap.SafetyMap.kMaxSpeedChange)
+                            .withVelocityY(
+                                    -rightStickX * RobotMap.SafetyMap.kMaxSpeed * RobotMap.SafetyMap.kMaxSpeedChange)
+                            .withRotationalRate(leftStickX * SwerveConstants.MaxAngularRate)));
         }
     }
-
 
     class FODC extends Command {
 
@@ -141,7 +132,7 @@ public class SwerveSubsystem extends SubsystemABS {
         private double snappedAngle;
 
         public FODC(CommandXboxController driverController) {
-            addRequirements(drivetrain);
+            addRequirements(DrivetrainConstants.drivetrain);
             this.driverController = driverController;
             printcontroller();
             tab.addNumber("Angle", () -> snappedAngle)
@@ -165,7 +156,8 @@ public class SwerveSubsystem extends SubsystemABS {
             double robotAngle;
 
             if (rightStickX != 0 || rightStickY != 0) {
-                angle = Math.toDegrees(Math.atan2(rightStickY, rightStickX)) - 90; // Adjust angle by subtracting 90 degrees
+                angle = Math.toDegrees(Math.atan2(rightStickY, rightStickX)) - 90; // Adjust angle by subtracting 90
+                                                                                   // degrees
                 lastAngle = angle; // Update last angle when joystick is moved
             } else {
                 angle = lastAngle; // Use last angle when joystick is not moved
@@ -181,18 +173,17 @@ public class SwerveSubsystem extends SubsystemABS {
                 RobotMap.SafetyMap.FODC.AngleDiff += 360;
             }
 
-            double output = drivetrain.getPIDRotation(RobotMap.SafetyMap.FODC.AngleDiff);
+            double output = DrivetrainConstants.drivetrain.getPIDRotation(RobotMap.SafetyMap.FODC.AngleDiff);
 
-            drivetrain.setControl(drive
+            DrivetrainConstants.drivetrain.setControl(DrivetrainConstants.drive
                     .withVelocityX(-leftStickY * SwerveConstants.MaxSpeed)
                     .withVelocityY(-leftStickX * SwerveConstants.MaxSpeed)
                     .withRotationalRate(output));
         }
     }
 
-
     @Override
     public void Failsafe() {
-        // TODO Auto-generated method stub
+        stop();
     }
 }

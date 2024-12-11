@@ -6,7 +6,7 @@ import frc.robot.constants.SwerveConstants;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
-public class DrivetrainConstants {
+public final class DrivetrainConstants {
     public static final CommandSwerveDrivetrain drivetrain =  TunerConstants.DriveTrain;
 
     public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()

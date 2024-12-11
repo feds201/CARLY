@@ -1,129 +1,127 @@
 package frc.robot.subsystems.vision.camera;
 
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.RobotMap;
-import frc.robot.subsystems.vision.VisionABC;
-import frc.robot.subsystems.vision.VisionVariables;
-import frc.robot.subsystems.vision.utils.LimelightHelpers;
-import frc.robot.subsystems.vision.utils.ObjectType;
-import frc.robot.subsystems.vision.utils.VisionObject;
-
-import java.util.Random;
-
-import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
+import frc.robot.utils.ObjectType;
+import frc.robot.utils.VisionABC;
+import frc.robot.utils.VisionObject;
 
 public class Front_Camera extends VisionABC {
-        public static String nt_key;
-        private static final ShuffleboardTab tab = Shuffleboard.getTab("FrontCamera");
-        public static NetworkTable table;
-        public static VisionObject note;
-        public Random random = new Random();
-        public Front_Camera() {
+	private VisionObject object;
+	private ShuffleboardLayout layout;
+	private ObjectType objectType;
+	private NetworkTable table;
 
-                nt_key = RobotMap.VisionMap.FrontCam.FRONT_CAMERA_NETWORK_TABLES_NAME;
-                table = NetworkTableInstance.getDefault().getTable(nt_key);
-                note = new VisionObject(0, 0, 0, ObjectType.NOTE);
-        }
+	private DoubleSupplier tx;
+	private DoubleSupplier ty;
+	private DoubleSupplier ta;
 
-        private final static Front_Camera INSTANCE = new Front_Camera();
+	public Front_Camera() {
+		super();
+	}
 
-        @SuppressWarnings("WeakerAccess")
-        public static Front_Camera getInstance() {
-                return INSTANCE;
-        }
+		@Override
+	public void init() {
+		objectType = ObjectType.INFINITE_CHARGE_BALLS;
+		object = new VisionObject(0,0,0,objectType);
+		layout = tab.getLayout(objectType.getName(), "List Layout");
+		table = NetworkTableInstance.getDefault().getTable(objectType.getNetworkTable());
 
-        @Override
-        public void simulationPeriodic() {
-                note.update(
-                        random.nextDouble() * 100,
-                        random.nextDouble() * 100,
-                        random.nextDouble() * 360
-                );
-                Periodic();
-        }
-        @Override
-        public void periodic() {
-                note.update(
-                        table.getEntry("tx").getNumber(0).doubleValue(),
-                        table.getEntry("ty").getNumber(0).doubleValue(),
-                        table.getEntry("ta").getNumber(0).doubleValue()
-                );
-                Periodic();
-        }
+		layout.addNumber("tx", tx);
+		layout.addNumber("ty", ty);
+		layout.addNumber("ta", ta);
+	}
 
-        @Override
-        public boolean CheckTarget() {
-                return table.getEntry("tv").getNumber(0).intValue() == 1;
-        }
+	@Override
+	public void periodic() {
+		if (enabled) {
+			object.update(
+				table.getEntry("tx").getDouble(0.0),
+				table.getEntry("ty").getDouble(0.0),
+				table.getEntry("ta").getDouble(0.0)
+				);
 
-        @Override
-        public Translation2d GetTarget(VisionObject object) {
-                return new Translation2d(note.getX(), note.getY());
-        }
+			tx = () -> object.getX();
+			ty = () -> object.getY();
+			ta = () -> object.getArea();
+		}
+	}
 
-        @Override
-        public void setPipeline(int pipeline) {
-                LimelightHelpers.setPipelineIndex(nt_key,pipeline);
-        }
+	@Override
+	public boolean CheckTarget() {
+		return object.isPresent();
+	}
 
-        @Override
-        public void setLEDMode(int mode) {
-                switch ( mode ) {
-                        case 0:
-                                LimelightHelpers.setLEDMode_ForceOff(nt_key);
-                                break;
-                        case 1:
-                                LimelightHelpers.setLEDMode_ForceOn(nt_key);
-                                break;
-                        case 2:
-                                LimelightHelpers.setLEDMode_ForceBlink(nt_key);
-                                break;
-                        default:
-                                break;
-                }
-        }
+	@Override
+	public Translation2d GetTarget(VisionObject object) {
+		return new Translation2d(object.getX(), object.getY());
+	}
 
-        /**
-         * @param mode 0: Driver Camera Mode, 1: Processor Camera Mode
-         */
-        @Override
-        public void setCamMode(int mode){
-                switch ( mode ) {
-                        case 0:
-                                LimelightHelpers.setCameraMode_Driver(nt_key);
-                                break;
-                        case 1:
-                                LimelightHelpers.setCameraMode_Processor(nt_key);
-                                break;
-                        default:
-                                break;
-                }
-        }
+	@Override
+	public void setPipeline(int pipeline) {
+		table.getEntry("pipeline").setNumber(pipeline);
+	}
 
-        @Override
-        public Command BlinkLED() {
-                return runOnce(() -> LimelightHelpers.setLEDMode_ForceBlink(nt_key))
-                               .andThen(waitSeconds(2))
-                               .andThen(() -> LimelightHelpers.setLEDMode_ForceOff(nt_key));
-        }
+	@Override
+	public void setLEDMode(int mode) {
+		table.getEntry("ledMode").setNumber(mode);
+	}
 
-        @Override
-        public Command TurnOffLED() {
-                return runOnce(() -> LimelightHelpers.setLEDMode_ForceOff(nt_key));
-        }
+	@Override
+	public void setCamMode(int mode) {
+		table.getEntry("camMode").setNumber(mode);
+	}
 
-        private void Periodic(){
-//                VisionVariables.FrontCam.distance = note.getDistance();
-                VisionVariables.FrontCam.tv = table.getEntry("tv").getNumber(0).intValue();
-                VisionVariables.FrontCam.CameraMode = table.getEntry("camMode").getNumber(0).intValue();
-                VisionVariables.FrontCam.LEDMode = table.getEntry("ledMode").getNumber(0).intValue();
+	@Override
+	public Command BlinkLED() {
+		return runOnce(
+			() -> setLEDMode(2)
+		);
+	}
 
-        }
+	@Override
+	public Command TurnOffLED() {
+		return runOnce(() -> setLEDMode(0));
+	}
+	
+	@Override
+	public void simulationPeriodic() {
+		if (enabled) {
+			object.update(
+				Math.random() * 100,
+				Math.random() * 100,
+				Math.random() * 100
+				);
+
+			tx = () -> object.getX();
+			ty = () -> object.getY();
+			ta = () -> object.getArea();
+		}
+	}
+
+
+
+	@Override
+	public void setDefaultCommand() {}	
+	
+	@Override
+	public boolean isHealthy() {
+		return true;
+	}
+
+	@Override
+	public void Failsafe() {
+		setLEDMode(0);
+		setCamMode(0);
+		setPipeline(0);
+	}
+
+
 }
 

@@ -9,22 +9,22 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.constants.RobotMap;
-import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.RobotMap.ElevatorMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
 
-public class elevator extends SubsystemABS {
+public class Elevator extends SubsystemABS {
   /** Creates a new elevator. */
 
   public static TalonFX elevatorMotor = new TalonFX(RobotMap.ElevatorMap.ELEVATOR_MOTOR);
 
-  DigitalInput toplimitSwitch = new DigitalInput(0);
-  DigitalInput bottomlimitSwitch = new DigitalInput(1);
+  // DigitalInput toplimitSwitch = new DigitalInput(0);
+  // DigitalInput bottomlimitSwitch = new DigitalInput(1);
 
   private ShuffleboardTab tab;
   private String tabName;
 
-  public elevator(Subsystems part , String tabName) {
+  public Elevator(Subsystems part , String tabName) {
     super(part, tabName);
     this.tabName = tabName;
   }
@@ -50,15 +50,15 @@ public class elevator extends SubsystemABS {
 
     @Override
     public boolean isHealthy() {
-        return false;
+        return true;
     }
 
     public void moveUp(){
-        elevatorMotor.set(ElevatorConstants.kElevatorSpeed);
+        elevatorMotor.set(ElevatorMap.ELEVATOR_SPEED);
     }
 
     public void moveDown(){
-        elevatorMotor.set(-1 * ElevatorConstants.kElevatorSpeed);
+        elevatorMotor.set(-1 * ElevatorMap.ELEVATOR_SPEED);
     }
 
     @Override

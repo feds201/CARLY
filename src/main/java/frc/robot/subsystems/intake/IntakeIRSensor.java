@@ -4,26 +4,20 @@
 
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
 
 public class IntakeIRSensor extends SubsystemABS {
   /** Creates a new BreakBeamSensor. */
   // private final DigitalInput transmitter;
-  private final DigitalInput receiverIntake;
-  private final NetworkTableEntry beamBrokenIntake;
-  private final ShuffleboardTab tab;
-  private final NetworkTableEntry nTableEntry;
+  private  DigitalInput receiverIntake;
+  private  NetworkTableEntry beamBrokenIntake;
+  private  NetworkTableEntry nTableEntry;
  
   public IntakeIRSensor(Subsystems part, String tabName) {
     super(part, tabName);  
-    tab = getTab();
-    receiverIntake = new DigitalInput(0);
-    setupNetworkTables(tabName);
     nTableEntry = ntTable.getEntry("Intake IR Sensor"); 
     beamBrokenIntake = ntTable.getEntry(tabName);
     
@@ -36,24 +30,22 @@ public class IntakeIRSensor extends SubsystemABS {
 
   @Override
   public void init() {
-    
+      receiverIntake = new DigitalInput(0);
   }
 
   @Override
   public void simulationPeriodic() {
-    // TODO Auto-generated method stub
    
   }
 
   @Override
   public void setDefaultCommand() {
-    // TODO Auto-generated method stub
     
   }
 
   @Override
   public boolean isHealthy() {
-  return true;
+    return true;
   }
 
   @Override

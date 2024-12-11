@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.controller.PIDController;
+
 public class RobotMap {
 
     public static class SafetyMap {
@@ -11,7 +13,7 @@ public class RobotMap {
         public static  double kMaxSpeedChange = 1;
         public static double kFollowerCommand = 6;
 
-        public class FODC {
+        public static class FODC {
             public static final int LineCount = 72;
             public static double AngleDiff = 0.0;
         }
@@ -37,20 +39,15 @@ public class RobotMap {
 
     public static class ElevatorMap {
         public static final int ELEVATOR_MOTOR = 8;
+        public static final int ELEVATOR_SPEED = 0;
     }
 
-    public static class LauncherMap
-    {
-        public static final int LAUNCHER_MOTOR = 9;
-        public static final int TURRET_MOTOR = 10;
-        public static final int LAUNCHER_SOLENOID_FORWARD = 3;
-        public static final int LAUNCHER_SOLENOID_REVERSE = 4;
-    }
 
     // Additional motor controllers or sensors could be added here
     public static class SensorMap {
         // Example: Add sensor ports (like encoders, gyros, etc.)
         public static final int GYRO_PORT = 0;
+        
     }
 
     // You can add more mappings for other subsystems like intake, shooter, etc.
@@ -62,36 +59,69 @@ public class RobotMap {
         public static final double cameraAngle = 0; // degrees
 
 
-        public static class BackCam {
-            public static final String description = "For finding Notes and going towards them";
-            public static final String kname = "BackCamera";
-            public static final String ip = "http://10.2.1.17:5801";
-            public static final String BACK_CAMERA_NETWORK_TABLES_NAME = "limelight-april";
-            public static final double APRILTAG_HEIGHT = 0.0;
-            public static final double CAMERA_HEIGHT = 0.0;
-            public static double horizontal_fov = 59.6;
-            public static double vertical_fov = 45.7;
-            public static int CameraWidth = 640;
-            public static int CameraHeight = 480;
+        public static class CameraConfig {
+            public static class BackCam {
+                public static final int CAMERA_HEIGHT = 480;
+                public static final int CAMERA_WIDTH = 640;
+                public static final double TARGET_HEIGHT = 0.0;
+                public static final double HORIZONTAL_FOV = 59.6;
+                public static final double VERTICAL_FOV = 45.7;
+            }
+        
+            public static class FrontCam {
+                public static final int CAMERA_HEIGHT = 480;
+                public static final int CAMERA_WIDTH = 640;
+                public static final double TARGET_HEIGHT = 0.0;
+                public static final double HORIZONTAL_FOV = 59.6;
+                public static final double VERTICAL_FOV = 45.7;
+            }
         }
-    
-        public static class FrontCam {
-            public static final String description = "For finding AprilTags and for distance calculation";
-            public static final String kName = "FrontCamera";
-            public static final String ip = "http://10.2.1.43:5801";
-            public static final String FRONT_CAMERA_NETWORK_TABLES_NAME = "limelight-notes";
-            public static double horizontal_fov = 63.3;
-            public static double vertical_fov = 49.7;
-            public static int CameraWidth = 640;
-            public static int CameraHeight = 480;
-
-    }
+        
 
     
 }
+
+
 public static class IntakeMap {
-        public static final int INTAKE_MOTOR = 11;
-        public static final int INTAKE_WRIST = 12;
+    public static final int INTAKE_MOTOR = 11;
+    public static final int INTAKE_WRIST = 12;
+    public static final double K_INTAKE_NOTE_WHEEL_SPEED = -1;
+    public static final double K_SPIT_OUT_NOTE_WHEEL_SPEED = 1;
+    public static final double K_AMP_IN_WHEEL_SPEED = 1;
+    public static final double K_HANDOFF_NOTE_WHEEL_SPEED = 0.6;
+    public static final double K_DISTANCE_SENSOR_DETECTED_DELAY = 0.35;
+
+    public static class SensorConstants {
+        public static final int INTAKE_BB_RECEIVER = 6;
+        public static final int INTAKE_BB_TRANSMITTER = 7;
+        public static final int INTAKE_ROTATE_ENCODER = 2;
+    }
+
+    public static class WristPID {
+        public static final double KP = 0.003;
+        public static final double KI = 0.001;
+        public static final double KD = 0.0;
+        public static final double KIZONE = Double.POSITIVE_INFINITY;
+        public static final double K_ROTATION_TOLERANCE = 10;
+
+        /* TODO: Change these values after testing with Carly Intake */
+        public static final double K_SPIT_OUT_POSITION = 201;
+        public static final double K_WRIST_FLOOR_POSITION = 308;
+        public static final double K_WRIST_HANDOFF_POSITION = 308;
+        public static final double K_WRIST_SHOOTER_FEEDER_SETPOINT = 94;
+        public static double K_WRIST_OUT_OF_THE_WAY = 150;
+
+         // TODO: Ideally all of the above positions should be based on this "home" position so we only have to change this
+
+        public static PIDController getWristPID() {
+            PIDController pid = new PIDController(KP, KI, KD);
+            pid.setIZone(KIZONE);
+            pid.setTolerance(K_ROTATION_TOLERANCE);
+            return pid;
+        }
 
     }
+
+
+}
 }
