@@ -1,9 +1,9 @@
-package frc.robot.subsystems.Vision;
+package frc.robot.subsystems.vision;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.subsystems.Vision.utils.VisionObject;
+import frc.robot.subsystems.vision.utils.VisionObject;
 
 public class VisionVariables {
 

@@ -16,14 +16,13 @@
  *
  */
 
-package frc.robot.subsystems.Vision;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.SubsystemABC;
-import frc.robot.subsystems.Vision.utils.VisionObject;
+import frc.robot.subsystems.vision.utils.VisionObject;
 
 public abstract class VisionABC extends SubsystemBase {
 
