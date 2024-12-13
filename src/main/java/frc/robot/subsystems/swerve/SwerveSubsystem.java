@@ -1,18 +1,14 @@
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.RobotMap;
-import frc.robot.constants.SwerveConstants;
+import frc.robot.commands.swerve.FODC;
+import frc.robot.commands.swerve.GenericDrivetrain;
+import frc.robot.constants.RobotMap.SafetyMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
 import frc.robot.utils.DrivetrainConstants;
-
-import java.util.Map;
 
 public class SwerveSubsystem extends SubsystemABS {
 
@@ -54,7 +50,7 @@ public class SwerveSubsystem extends SubsystemABS {
 
     @Override
     public void setDefaultCommand() {
-        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController));
+        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController, this));
     }
 
     @Override
@@ -63,7 +59,7 @@ public class SwerveSubsystem extends SubsystemABS {
     }
 
     public void setBetaDefaultCommand() {
-        DrivetrainConstants.drivetrain.setDefaultCommand(new FODC(driverController));
+        DrivetrainConstants.drivetrain.setDefaultCommand(new FODC(driverController, this));
     }
 
     public void stop() {
@@ -92,95 +88,10 @@ public class SwerveSubsystem extends SubsystemABS {
     }
 
     public double snapToNearestLine(double angle, int i) {
-        double snapAngle = 360.0 / RobotMap.SafetyMap.FODC.LineCount;
+        double snapAngle = 360.0 / SafetyMap.FODC.LineCount;
         return Math.round(angle / snapAngle) * snapAngle;
     }
 
-    class GenericDrivetrain extends Command {
-
-        private final CommandXboxController driverController;
-
-        public GenericDrivetrain(CommandXboxController driverController) {
-            addRequirements(DrivetrainConstants.drivetrain);
-            this.driverController = driverController;
-            printcontroller();
-        }
-
-        @Override
-        public void execute() {
-            super.execute();
-            // Apply Deadband to the controller inputs
-            double rightStickX = applyDeadband(driverController.getRightX(), 0.05);
-            double rightStickY = applyDeadband(driverController.getRightY(), 0.05);
-            double leftStickX = applyDeadband(driverController.getLeftX(), 0.05);
-
-            new ParallelCommandGroup(
-                    DrivetrainConstants.drivetrain.applyRequest(() -> DrivetrainConstants.drive
-                            .withVelocityX(
-                                    -rightStickY * RobotMap.SafetyMap.kMaxSpeed * RobotMap.SafetyMap.kMaxSpeedChange)
-                            .withVelocityY(
-                                    -rightStickX * RobotMap.SafetyMap.kMaxSpeed * RobotMap.SafetyMap.kMaxSpeedChange)
-                            .withRotationalRate(leftStickX * SwerveConstants.MaxAngularRate)));
-        }
-    }
-
-    class FODC extends Command {
-
-        private final CommandXboxController driverController;
-        private double angle;
-        private double lastAngle = 0.0;
-        private double snappedAngle;
-
-        public FODC(CommandXboxController driverController) {
-            addRequirements(DrivetrainConstants.drivetrain);
-            this.driverController = driverController;
-            printcontroller();
-            tab.addNumber("Angle", () -> snappedAngle)
-                    .withWidget(BuiltInWidgets.kGyro)
-                    .withPosition(0, 0)
-                    .withProperties(Map.of("majorTickSpacing", RobotMap.SafetyMap.FODC.LineCount, "startingAngle", 0));
-            tab.addNumber("FODC/Angle", () -> angle)
-                    .withWidget(BuiltInWidgets.kGyro)
-                    .withPosition(0, 0)
-                    .withProperties(Map.of("majorTickSpacing", RobotMap.SafetyMap.FODC.LineCount, "startingAngle", 0));
-        }
-
-        @Override
-        public void execute() {
-            super.execute();
-            // Apply Deadband to the controller inputs
-            double rightStickX = applyDeadband(driverController.getRightX(), 0.05);
-            double rightStickY = applyDeadband(driverController.getRightY(), 0.05);
-            double leftStickX = applyDeadband(driverController.getLeftX(), 0.05);
-            double leftStickY = applyDeadband(driverController.getLeftY(), 0.05);
-            double robotAngle;
-
-            if (rightStickX != 0 || rightStickY != 0) {
-                angle = Math.toDegrees(Math.atan2(rightStickY, rightStickX)) - 90; // Adjust angle by subtracting 90
-                                                                                   // degrees
-                lastAngle = angle; // Update last angle when joystick is moved
-            } else {
-                angle = lastAngle; // Use last angle when joystick is not moved
-            }
-
-            snappedAngle = snapToNearestLine(angle, RobotMap.SafetyMap.FODC.LineCount);
-            robotAngle = getRobotAngle();
-            RobotMap.SafetyMap.FODC.AngleDiff = snappedAngle - robotAngle;
-
-            if (RobotMap.SafetyMap.FODC.AngleDiff > 180) {
-                RobotMap.SafetyMap.FODC.AngleDiff -= 360;
-            } else if (RobotMap.SafetyMap.FODC.AngleDiff < -180) {
-                RobotMap.SafetyMap.FODC.AngleDiff += 360;
-            }
-
-            double output = DrivetrainConstants.drivetrain.getPIDRotation(RobotMap.SafetyMap.FODC.AngleDiff);
-
-            DrivetrainConstants.drivetrain.setControl(DrivetrainConstants.drive
-                    .withVelocityX(-leftStickY * SwerveConstants.MaxSpeed)
-                    .withVelocityY(-leftStickX * SwerveConstants.MaxSpeed)
-                    .withRotationalRate(output));
-        }
-    }
 
     @Override
     public void Failsafe() {

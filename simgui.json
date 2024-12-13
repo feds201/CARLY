@@ -4,6 +4,11 @@
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Intake/AMP Pid Controller": "PIDController",
       "/Shuffleboard/Intake/PID Controller": "PIDController",
+      "/Shuffleboard/Tester/Aim at Ball": "Command",
+      "/Shuffleboard/Tester/Deply Intake ": "Command",
+      "/Shuffleboard/Tester/Handoff ": "Command",
+      "/Shuffleboard/Tester/Intake Until Note in": "Command",
+      "/Shuffleboard/Tester/Move Elevator Up": "Command",
       "/Shuffleboard/intake/AMP Pid Controller": "PIDController",
       "/Shuffleboard/intake/PID Controller": "PIDController"
     }

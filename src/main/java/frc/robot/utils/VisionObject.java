@@ -4,7 +4,7 @@ package frc.robot.utils;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.constants.RobotMap;
+import frc.robot.constants.RobotMap.VisionMap;
 
 public class VisionObject {
     private double x;
@@ -101,9 +101,9 @@ public class VisionObject {
 
     public double getDistance() {
         double targetOffsetAngle_Vertical = y;
-        double limelightMountAngleDegrees = RobotMap.VisionMap.cameraAngle;
-        double limelightLensHeightMetres = RobotMap.VisionMap.cameraHeight;
-        double goalHeightMetres = RobotMap.VisionMap.targetHeight;
+        double limelightMountAngleDegrees = VisionMap.cameraAngle;
+        double limelightLensHeightMetres = VisionMap.cameraHeight;
+        double goalHeightMetres = VisionMap.targetHeight;
         double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
         double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
         return (goalHeightMetres - limelightLensHeightMetres) / Math.tan(angleToGoalRadians);

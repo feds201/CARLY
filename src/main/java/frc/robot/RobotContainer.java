@@ -6,16 +6,16 @@ import frc.robot.commands.HandoffToElevator;
 import frc.robot.commands.elevator.ElevatorMoveLimit;
 import frc.robot.commands.intake.DeployIntake;
 import frc.robot.commands.intake.IntakeUntilNoteIn;
-import frc.robot.commands.intake.RotateWristBasic;
 import frc.robot.commands.swerve.AimToBall;
-import frc.robot.constants.RobotMap;
-import frc.robot.constants.RobotMap.UsbMap;
+import frc.robot.commands.swerve.GenericDrivetrain;
+import frc.robot.constants.RobotMap.*;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.IntakeIRSensor;
 import frc.robot.subsystems.intake.IntakeWheels;
 import frc.robot.subsystems.intake.Wrist;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.camera.Back_Camera;
+import frc.robot.utils.DrivetrainConstants;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
 
@@ -48,7 +48,7 @@ public class RobotContainer {
         swerveSubsystem = new SwerveSubsystem(
                 Subsystems.SWERVE_DRIVE ,
                 Subsystems.SWERVE_DRIVE.getNetworkTable() ,
-                RobotMap.SensorMap.GYRO_PORT ,
+                SensorMap.GYRO_PORT ,
                 driverController
         );
 
@@ -79,26 +79,14 @@ public class RobotContainer {
         );
 
         
+        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController, swerveSubsystem));
 
-
-        swerveSubsystem.setDefaultCommand(); 
+        // swerveSubsystem.setDefaultCommand(); 
 //      swerveSubsystem.setBetaDefaultCommand(); /*RUN FODC INSTEAD OF DEFAULT COMMAND*/
         configureBindings();
 
 
-    
 
-    //! YOU DO NOT NEED THIS BELOW CODE SINCE RUNNING THE SWERVE DRIVETRAIN IN DEFAULT COMMAND WILL RUN THE SWERVE DRIVETRAIN
-        //  drivetrain.setDefaultCommand(new ParallelCommandGroup(
-        //         drivetrain.applyRequest(() -> DrivetrainConstants.drive
-        //                 .withVelocityX(-driverController.getLeftY()
-        //                         * SafetyMap.kMaxSpeed * SafetyMap.kMaxSpeedChange)
-        //                 .withVelocityY(-driverController.getLeftX()
-        //                         * SafetyMap.kMaxSpeed * SafetyMap.kMaxSpeedChange)
-        //                 .withRotationalRate(-driverController.getRightX() 
-        //                         * SafetyMap.kMaxSpeed * SafetyMap.kMaxSpeedChange)),
-        //         new RepeatCommand(
-        //                 new InstantCommand(this::printCurrentStickValues))));
     }
 
 
