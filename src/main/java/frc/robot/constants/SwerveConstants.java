@@ -3,7 +3,8 @@ package frc.robot.constants;
 
 public class SwerveConstants {
     public static final double MaxSpeed = 5; // 6 meters per second desired top speed
-    public static final double MaxAngularRate = 1 * Math.PI; // 3/4 of a rotation per second max angular velocity
+    public static final double MaxAngularRate = Math.PI; // 3/4 of a rotation per second max angular velocity
+	public static final double kAngularRateMultiplier = 2;
     public static final double kAutonMoveSpeed = 1;
     public static final double kAlignmentOutput = 0.01;
 		public static double kAlignmentTolerance = 1;

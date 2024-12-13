@@ -1,27 +1,30 @@
 package frc.robot.commands.swerve;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.constants.SwerveConstants;
+import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.camera.Back_Camera;
 import frc.robot.utils.DrivetrainConstants;
 import frc.robot.utils.Smooth;
 
 public class AimToBall extends Command {
 
-    private final PIDController rotationalPID;
-    private final PIDController strafePID;
-    private final PIDController distancePID;
-    private final SwerveSubsystem c_swerve;
-    private final Back_Camera c_visionsystem;
+    private PIDController rotationalPID;
+    private PIDController strafePID;
+    private PIDController distancePID;
+    private CommandSwerveDrivetrain c_swerve;
+    private Back_Camera c_visionsystem;
 
     private Smooth X_filter;
     private Smooth Y_filter;
 
-    public AimToBall(SwerveSubsystem swerve, Back_Camera visionsystem) {
-        c_swerve = swerve;
+    public AimToBall(CommandSwerveDrivetrain drivetrain, Back_Camera visionsystem) {
+        c_swerve = drivetrain;
         c_visionsystem = visionsystem;
         X_filter = new Smooth(5);
         Y_filter = new Smooth(2);
@@ -35,13 +38,13 @@ public class AimToBall extends Command {
         strafePID.setTolerance(0);
         distancePID.setTolerance(0);
 
-        addRequirements(swerve);
+        addRequirements(drivetrain);
     }
 
     @Override
     public void initialize() {
         SmartDashboard.putBoolean("AimToBallCommand", true);
-        c_swerve.drivetrain.resetPID();
+        c_swerve.resetPID();
         rotationalPID.reset();
         strafePID.reset();
         distancePID.reset();
@@ -62,12 +65,8 @@ public class AimToBall extends Command {
         double Output_linear = distancePID.calculate(Y_smooth);
         double Output_strafe = strafePID.calculate(X_smooth);
         double Output_rotation = (rotationalPID.calculate(X_smooth) - Output_strafe) - Output_strafe / 2; // basic
-                                                                                                          // principles
-                                                                                                          // of
-                                                                                                          // kinematics
-                                                                                                          // and
-                                                                                                          // dynamics
 
+    
         // Log values to SmartDashboard
 
         SmartDashboard.putNumber("Limelight Smoothed X", X_smooth);
@@ -77,7 +76,7 @@ public class AimToBall extends Command {
         SmartDashboard.putNumber("X output", Output_linear);
 
         // Send control to the swerve drivetrain
-        c_swerve.drivetrain.setControl(DrivetrainConstants.drive
+        c_swerve.setControl(DrivetrainConstants.drive
                 .withVelocityX(Output_linear)
                 .withVelocityY(-Output_strafe)
                 .withRotationalRate(Output_rotation));

@@ -79,10 +79,8 @@ public class RobotContainer {
         );
 
         
-        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController, swerveSubsystem));
+        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController));
 
-        // swerveSubsystem.setDefaultCommand(); 
-//      swerveSubsystem.setBetaDefaultCommand(); /*RUN FODC INSTEAD OF DEFAULT COMMAND*/
         configureBindings();
 
 
@@ -117,7 +115,7 @@ public class RobotContainer {
             "Move Elevator Up", new ElevatorMoveLimit(),
             "Deply Intake ", new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController),
             "Intake Until Note in", new IntakeUntilNoteIn(intakeWheels, intakeIRSensor, driverController, operatorController),
-            "Aim at Ball", new AimToBall(swerveSubsystem, backCamera),
+            "Aim at Ball", new AimToBall(DrivetrainConstants.drivetrain, backCamera),
             "Handoff ", new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController)
         };
     }

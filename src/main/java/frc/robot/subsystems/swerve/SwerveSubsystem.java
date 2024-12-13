@@ -50,7 +50,7 @@ public class SwerveSubsystem extends SubsystemABS {
 
     @Override
     public void setDefaultCommand() {
-        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController, this));
+        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController));
     }
 
     @Override
