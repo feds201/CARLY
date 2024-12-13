@@ -8,11 +8,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.constants.RobotMap;
+import frc.robot.constants.RobotMap.IntakeMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
 
@@ -24,7 +22,7 @@ public class IntakeWheels extends SubsystemABS {
 public IntakeWheels(Subsystems part, String tabName) {
   super(part, tabName);
   tab = getTab();
-  intakeMotor = new CANSparkMax(RobotMap.IntakeMap.INTAKE_MOTOR, MotorType.kBrushless);
+  intakeMotor = new CANSparkMax(IntakeMap.INTAKE_MOTOR, MotorType.kBrushless);
   intakeSpeed = ntTable.getDoubleTopic("wheels_voltage").getEntry(0);
 }
 

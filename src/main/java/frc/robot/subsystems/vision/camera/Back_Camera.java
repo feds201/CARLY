@@ -115,7 +115,9 @@ public class Back_Camera extends VisionABC {
 
 
 	@Override
-	public void setDefaultCommand() {}	
+	public void setDefaultCommand() {
+		
+	}	
 	
 	@Override
 	public boolean isHealthy() {

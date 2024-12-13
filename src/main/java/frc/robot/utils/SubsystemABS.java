@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class SubsystemABS extends SubsystemBase {
-    private Subsystems part;
-    private  ShuffleboardTab tab;
-    protected   NetworkTable ntTable;
-    protected   String tabName;
-    protected  Object instance;
+    protected Subsystems part;
+    protected ShuffleboardTab tab;
+    protected NetworkTable ntTable;
+    protected String tabName;
+    protected Object instance;
 
     public SubsystemABS(Subsystems part, String tabName) {
         this.tabName = tabName;
@@ -22,13 +22,14 @@ public abstract class SubsystemABS extends SubsystemBase {
             this.tab = Shuffleboard.getTab(tabName + " - New");
         };
         setupNetworkTables(part.toString());
-        init();
         instance = this;
+        init();
+        
 
     }
 
     public SubsystemABS() {
-
+        init();
     }
 
     public Subsystems getPart() {
