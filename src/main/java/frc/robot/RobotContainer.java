@@ -78,7 +78,12 @@ public class RobotContainer {
 
     private void configureBindings() { 
         driverController.start()
-        .onTrue(swerveSubsystem.drivetrain.runOnce(swerveSubsystem.drivetrain::seedFieldRelative));
+        .onTrue(DrivetrainConstants.drivetrain.runOnce(DrivetrainConstants.drivetrain::seedFieldRelative));
+        driverController.a().whileTrue(new RotateWristBasic(wrist, ()-> -0.5));
+        driverController.b().whileTrue(new RunIntakeWheels(intakeWheels, ()-> 0.5));
+        driverController.leftTrigger().whileTrue(new AimToBall(DrivetrainConstants.drivetrain, backCamera));
+
+        
         /*DO NOT UN-COMMENT THIS LINE UNTIL INTAKE CONSTANTS HAVE BEEN FIXED!!! */
         // driverController.a().whileTrue(new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController));
     }
@@ -98,13 +103,17 @@ public class RobotContainer {
                 intakeIRSensor
         };
     }
+
+    // ONLY RUNS IN TEST MODE
     public Object[] TestCommands() {
         return new Object[] {
             "Move Elevator Up", new ElevatorMoveLimit(),
             "Deply Intake ", new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, operatorController),
             "Intake Until Note in", new IntakeUntilNoteIn(intakeWheels, intakeIRSensor, driverController, operatorController),
             "Aim at Ball", new AimToBall(DrivetrainConstants.drivetrain, backCamera),
-            "Handoff ", new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController)
+            "Handoff ", new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController),
+            "Test Wrist", new RotateWristBasic(wrist, ()-> -0.5),
+            "Test Intake Wheels", new RunIntakeWheels(intakeWheels, ()-> 0.5)
         };
     }
 

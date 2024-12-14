@@ -26,7 +26,12 @@ public class IntakeIRSensor extends SubsystemABS {
 
   @Override
   public void init() {
-      receiverIntake = new DigitalInput(0);
+    /*TODO: Verify the dio port for this sensor*/
+    try {
+      receiverIntake = new DigitalInput(5);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override

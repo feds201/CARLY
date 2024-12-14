@@ -66,9 +66,11 @@ public class RobotMap {
     // You can add more mappings for other subsystems like intake, shooter, etc.
 
     public static class VisionMap {
+        /*TODO: Change these values to match the actual value for the camera*/ 
+        
         public static final double ballRadius = 9; // cm ; 3.5 inches
-        public static final double targetHeight = 98.25; // cm ; 38.7 inches
-        public static final double cameraHeight = 40.64; // cm ; 16 inches
+        public static final double targetHeight = .9825; // m ; 38.7 inches
+        public static final double cameraHeight = .4064; // m ; 16 inches
         public static final double cameraAngle = 0; // degrees
 
 

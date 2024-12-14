@@ -18,7 +18,7 @@ public class ComandCenter {
 
     public static void addWristFailure(boolean failure){
         if(!wristFailureAdded){
-            tab.addBoolean("Wrist Failure", () -> failure).withProperties(Map.of("colorWhenTrue", "red", "colorWhenFalse", "green"));
+            tab.addBoolean("Wrist Okay?", () -> failure).withProperties(Map.of("colorWhenTrue", "red", "colorWhenFalse", "green"));
             wristFailureAdded = true;
         }
     }

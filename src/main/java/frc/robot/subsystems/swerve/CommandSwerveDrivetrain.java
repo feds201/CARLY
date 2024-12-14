@@ -36,8 +36,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     public static final PIDController pid = new PIDController(SwerveConstants.kRotationP  , SwerveConstants.kRotationI, SwerveConstants.kRotationD);
-//    public static final PIDController pid = new PIDController(0.04, .0009, .009);
-//    public static final PIDController pid =  new PIDController(.06135, .00, .00);
+
 
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();

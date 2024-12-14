@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.intake;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -13,6 +15,7 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.RobotMap.IntakeMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
@@ -33,8 +36,8 @@ public class Wrist extends SubsystemABS {
   private BooleanEntry failure;
   private BooleanEntry towardShooter;
   private ShuffleboardTab tab;
-  private double rawEncoderValue;
-  private double rotationAngleValue;
+  private DoubleSupplier rawEncoderValue = () -> 0;
+  private DoubleSupplier rotationAngleValue;
 
 
   public Wrist(Subsystems part, String tabName) {
@@ -49,21 +52,23 @@ public class Wrist extends SubsystemABS {
     towardShooter = ntTable.getBooleanTopic("toward_shooter").getEntry(false);
 
     wristRotationEncoder.setPositionOffset(0);
-    rawEncoderValue = wristRotationEncoder.get();
-    rotationAngleValue = rawEncoderValue * 360;
+     rawEncoderValue = () -> wristRotationEncoder.get();
+    rotationAngleValue = () -> rawEncoderValue.getAsDouble() * 360;
 
-    tab.add("Wrist Encoder Value", rawEncoderValue);
-    tab.add("Wrist Angle Raw (enc * 360)", rawEncoderValue * 360);
-    tab.add("Wrist Abs Position/ Position", wristRotationEncoder.getAbsolutePosition());
-    tab.add("Wrist Abs Position/ Offset", wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset());
-    tab.add("Wrist Angle Position/ Position", wristRotationEncoder.getAbsolutePosition() * 360);
-    tab.add("Wrist Angle Position/ Offset", (wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset()) * 360);
-    tab.add("Wrist after wrap around check", rotationAngleValue);
-    if (rawEncoderValue < 0) {
-      tab.add("Encoder negative", rawEncoderValue * 180 + 360);
+    tab.addNumber("Wrist Encoder Value", rawEncoderValue);
+    tab.addNumber("Wrist Angle Raw (enc * 360)",() ->  rawEncoderValue.getAsDouble() * 360);
+    tab.addNumber("Wrist Abs Position/ Position",() -> wristRotationEncoder.getAbsolutePosition());
+    tab.addNumber("Wrist Abs Position/ Offset",() ->  wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset());
+    tab.addNumber("Wrist Angle Position/ Position",() -> wristRotationEncoder.getAbsolutePosition() * 360);
+    tab.addNumber("Wrist Angle Position/ Offset",() ->  (wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset()) * 360);
+    tab.addNumber("Wrist after wrap around check",rotationAngleValue);
+    if (rawEncoderValue.getAsDouble() < 0) {
+      tab.add("Encoder negative", rawEncoderValue.getAsDouble() * 180 + 360);
     } else {
-      tab.add("Encoder positive", rawEncoderValue * 180);
+      tab.add("Encoder positive", rawEncoderValue.getAsDouble() * 180);
     }
+
+
   }
 
 
@@ -78,10 +83,16 @@ public class Wrist extends SubsystemABS {
   @Override
   public void periodic() {
     wristRotationEncoder.setPositionOffset(0);
+    rawEncoderValue = () -> wristRotationEncoder.get();
+    rotationAngleValue = () -> rawEncoderValue.getAsDouble() * 360;
+
      if(!wristRotationEncoder.isConnected()) {
       wristRotation.setVoltage(0);
     }
     // This method will be called once per scheduler run
+
+    SmartDashboard.putNumber("Wrist/rotationAngleValue", rotationAngleValue.getAsDouble());
+    SmartDashboard.putNumber("Wrist/rotationAngleValueActualValue", rawEncoderValue.getAsDouble() * 360);
     readWristAngle();
     readIntakeEncoder();
   }
@@ -137,11 +148,34 @@ public class Wrist extends SubsystemABS {
   }
 
   public void readWristAngle() {
-    
+    // rawEncoderValue = wristRotationEncoder.get();
+    // rotationAngleValue = rawEncoderValue * 360;
 
-    
+    // SmartDashboard.putNumber("Wrist Encoder Value", rawEncoderValue);
+    // SmartDashboard.putNumber("Wrist Angle Raw (enc * 360)", rawEncoderValue * 360);
 
-    rotationAngle.set(rotationAngleValue);
+    // SmartDashboard.putNumber("Wrist Abs Position", wristRotationEncoder.getAbsolutePosition());
+    // SmartDashboard.putNumber("Wrist Abs Position W/ Offset",
+    //     wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset());
+    // SmartDashboard.putNumber("Wrist Angle Position", wristRotationEncoder.getAbsolutePosition() * 360);
+    // SmartDashboard.putNumber("Wrist Angle Position W/ Offset",
+    //     (wristRotationEncoder.getAbsolutePosition() - wristRotationEncoder.getPositionOffset()) * 360);
+
+    // if (rawEncoderValue < 0) {
+    //   SmartDashboard.putNumber("Encoder negative", rawEncoderValue * 180 + 360);
+    // } else {
+    //   SmartDashboard.putNumber("Encoder positive", rawEncoderValue * 180);
+    // }
+
+    // // if(rotationAngleValue > 300) {
+    // // rotationAngleValue -= 360;
+    // // } else if (rotationAngleValue < -50) {
+    // // rotationAngleValue += 360;
+    // // }
+
+    // SmartDashboard.putNumber("Wrist after wrap around check", rotationAngleValue);
+
+    rotationAngle.set(rotationAngleValue.getAsDouble());
   }
 
   public void readIntakeEncoder() {
