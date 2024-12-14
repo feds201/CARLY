@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.constants.SwerveConstants;
+import frc.robot.constants.RobotMap.SafetyMap.SwerveConstants;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
 import java.util.function.Supplier;

@@ -9,7 +9,6 @@ import java.util.Map;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.RobotMap.SafetyMap;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.utils.DrivetrainConstants;
@@ -28,10 +27,12 @@ public class FODC extends Command {
             this.driverController = driverController;
             this.subsystem = subsystem;
             subsystem.printcontroller();  
+
             subsystem.getTab().addNumber("Angle", () -> snappedAngle)
                     .withWidget(BuiltInWidgets.kGyro)
                     .withPosition(0, 0)
                     .withProperties(Map.of("majorTickSpacing", SafetyMap.FODC.LineCount, "startingAngle", 0));
+                    
             subsystem.getTab().addNumber("FODC/Angle", () -> angle)
                     .withWidget(BuiltInWidgets.kGyro)
                     .withPosition(0, 0)
@@ -49,8 +50,7 @@ public class FODC extends Command {
             double robotAngle;
 
             if (rightStickX != 0 || rightStickY != 0) {
-                angle = Math.toDegrees(Math.atan2(rightStickY, rightStickX)) - 90; // Adjust angle by subtracting 90
-                                                                                   // degrees
+                angle = Math.toDegrees(Math.atan2(rightStickY, rightStickX)) - 90; // Adjust angle by subtracting 90 degrees
                 lastAngle = angle; // Update last angle when joystick is moved
             } else {
                 angle = lastAngle; // Use last angle when joystick is not moved
@@ -69,8 +69,8 @@ public class FODC extends Command {
             double output = DrivetrainConstants.drivetrain.getPIDRotation(SafetyMap.FODC.AngleDiff);
 
             DrivetrainConstants.drivetrain.setControl(DrivetrainConstants.drive
-                    .withVelocityX(-leftStickY * SwerveConstants.MaxSpeed)
-                    .withVelocityY(-leftStickX * SwerveConstants.MaxSpeed)
+                    .withVelocityX(-leftStickY * SafetyMap.kMaxSpeed)
+                    .withVelocityY(-leftStickX * SafetyMap.kMaxSpeed)
                     .withRotationalRate(output));
         }
     }

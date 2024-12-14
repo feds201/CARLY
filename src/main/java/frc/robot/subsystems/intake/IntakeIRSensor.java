@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
@@ -13,13 +12,10 @@ public class IntakeIRSensor extends SubsystemABS {
   /** Creates a new BreakBeamSensor. */
   // private final DigitalInput transmitter;
   private  DigitalInput receiverIntake;
-  private  NetworkTableEntry beamBrokenIntake;
-  private  NetworkTableEntry nTableEntry;
- 
   public IntakeIRSensor(Subsystems part, String tabName) {
     super(part, tabName);  
-    nTableEntry = ntTable.getEntry("Intake IR Sensor"); 
-    beamBrokenIntake = ntTable.getEntry(tabName);
+    ntTable.getEntry("Intake IR Sensor"); 
+    ntTable.getEntry(tabName);
     
   }
 

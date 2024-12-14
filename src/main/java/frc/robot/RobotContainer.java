@@ -2,17 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.elevator.ElevatorMoveLimit;
-import frc.robot.commands.elevator.HandoffToElevator;
-import frc.robot.commands.intake.DeployIntake;
-import frc.robot.commands.intake.IntakeUntilNoteIn;
+import frc.robot.commands.elevator.*;
+import frc.robot.commands.intake.*;
 import frc.robot.commands.swerve.AimToBall;
 import frc.robot.commands.swerve.GenericDrivetrain;
 import frc.robot.constants.RobotMap.*;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intake.IntakeIRSensor;
-import frc.robot.subsystems.intake.IntakeWheels;
-import frc.robot.subsystems.intake.Wrist;
+import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.camera.Back_Camera;
 import frc.robot.utils.DrivetrainConstants;
@@ -21,29 +17,21 @@ import frc.robot.utils.Subsystems;
 
 
 public class RobotContainer {
- 
-    // Replace with CommandPS4Controller or CommandJoystick if needed
-    SwerveSubsystem swerveSubsystem;
-    IntakeWheels intakeWheels;
-    Wrist wrist;
-    Back_Camera backCamera;
-    Elevator elevator;
-    IntakeIRSensor intakeIRSensor;
-    CommandXboxController driverController;
-    CommandXboxController operatorController;
-//     CommandSwerveDrivetrain drivetrain;
+
+    private SwerveSubsystem swerveSubsystem;
+    private IntakeWheels intakeWheels;
+    private Wrist wrist;
+    private Back_Camera backCamera;
+    private Elevator elevator;
+    private IntakeIRSensor intakeIRSensor;
+    private CommandXboxController driverController;
+    private CommandXboxController operatorController;
 
 
     public RobotContainer() {
-        // Configure the trigger bindings
 
-        driverController = new CommandXboxController(
-                UsbMap.DRIVER_CONTROLLER
-        );
-
-        operatorController = new CommandXboxController(
-                UsbMap.OPERATOR_CONTROLLER
-        );
+        driverController = UsbMap.driverController;
+        operatorController = UsbMap.operatorController;
 
         swerveSubsystem = new SwerveSubsystem(
                 Subsystems.SWERVE_DRIVE ,
@@ -113,7 +101,7 @@ public class RobotContainer {
     public Object[] TestCommands() {
         return new Object[] {
             "Move Elevator Up", new ElevatorMoveLimit(),
-            "Deply Intake ", new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController),
+            "Deply Intake ", new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, operatorController),
             "Intake Until Note in", new IntakeUntilNoteIn(intakeWheels, intakeIRSensor, driverController, operatorController),
             "Aim at Ball", new AimToBall(DrivetrainConstants.drivetrain, backCamera),
             "Handoff ", new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController)

@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.constants.RobotMap.ElevatorMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;

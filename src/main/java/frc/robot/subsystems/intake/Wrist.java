@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.constants.RobotMap.IntakeMap;
@@ -69,8 +70,7 @@ public class Wrist extends SubsystemABS {
   @Override
   public void init() {
     wristRotation = new CANSparkMax(IntakeMap.INTAKE_WRIST, MotorType.kBrushless);
-    wristRotationEncoder = new DutyCycleEncoder(IntakeMap.SensorConstants.INTAKE_ROTATE_ENCODER);
-    
+    wristRotationEncoder = new DutyCycleEncoder(IntakeMap.SensorConstants.INTAKE_ROTATE_ENCODER);   
   }
 
 
@@ -86,9 +86,6 @@ public class Wrist extends SubsystemABS {
     readIntakeEncoder();
   }
 
- 
-  
-
   public void rotateWristPID() {
     double output = pid.calculate(getWristAngle());
     setWristVoltage(output);
@@ -98,7 +95,6 @@ public class Wrist extends SubsystemABS {
     setTarget(target);
     pid.setSetpoint(target);
   }
-
 
   public boolean pidAtSetpoint() {
     return pid.atSetpoint();
@@ -189,15 +185,20 @@ public class Wrist extends SubsystemABS {
 
   @Override
   public boolean isHealthy() {
-    return true;
-    
+    double motor_temp = wristRotation.getMotorTemperature();
+    double motor_current = wristRotation.getOutputCurrent();
+    double motor_voltage = wristRotation.getBusVoltage();
+    if (motor_temp > 50) DriverStation.reportError("Wrist motor temperature is too high", false);
+    if (motor_temp > 60 || motor_current > 40 || motor_voltage < 10) {
+      return false;
+    }
+    return true;    
   }
 
 
   @Override
   public void Failsafe() {
     wristRotation.set(0);
-    
   }
 }
 

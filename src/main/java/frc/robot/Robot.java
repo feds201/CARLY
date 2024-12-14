@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.utils.ComandCenter;
 import frc.robot.utils.RobotTester;
 import frc.robot.utils.SafetyManager;
 
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot
 
         robotContainer = new RobotContainer();
         new SafetyManager(robotContainer.SafeGuardSystems());
+        ComandCenter.init();
 
 
         // Start logging data log

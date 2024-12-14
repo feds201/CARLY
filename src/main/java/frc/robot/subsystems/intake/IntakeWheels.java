@@ -8,8 +8,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.RobotMap.IntakeMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
@@ -22,41 +22,40 @@ public class IntakeWheels extends SubsystemABS {
 public IntakeWheels(Subsystems part, String tabName) {
   super(part, tabName);
   tab = getTab();
-  intakeMotor = new CANSparkMax(IntakeMap.INTAKE_MOTOR, MotorType.kBrushless);
-  intakeSpeed = ntTable.getDoubleTopic("wheels_voltage").getEntry(0);
+  
+  tab.addNumber("intake bus voltage",() -> intakeMotor.getBusVoltage());
+  tab.addNumber("intake motor temperature",() -> intakeMotor.getMotorTemperature());
 }
 
   @Override
-  public void init() {}
-
-  @Override
-  public void periodic() {
-    // TODO Auto-generated method stub
-    SmartDashboard.putNumber("intake bus voltage", intakeMotor.getBusVoltage());
-    SmartDashboard.putNumber("intake motor temperature", intakeMotor.getMotorTemperature());
-    
-
+  public void init() {
+  intakeMotor = new CANSparkMax(IntakeMap.INTAKE_MOTOR, MotorType.kBrushless);
+  intakeSpeed = ntTable.getDoubleTopic("wheels_voltage").getEntry(0);
   }
 
   @Override
-  public void simulationPeriodic() {
-    // TODO Auto-generated method stub
-  }
+  public void periodic() {}
 
   @Override
-  public void setDefaultCommand() {
-    // TODO Auto-generated method stub
-  }
+  public void simulationPeriodic() {}
+
+  @Override
+  public void setDefaultCommand() {}
 
   @Override
   public boolean isHealthy() {
-    // TODO Auto-generated method stub
+    double motorTemp = intakeMotor.getMotorTemperature();
+    double motorVoltage = intakeMotor.getBusVoltage();
+    if (motorTemp > 50) DriverStation.reportWarning("Intake motor temperature is too high", false);
+    if (motorTemp > 60 || motorVoltage < 10) return false;
+    
     return true;
   }
 
   @Override
   public void Failsafe() {
-    // TODO Auto-generated method stub
+    intakeSpeed.set(0);
+    intakeMotor.set(0);
   }
 
   public void setMotorSpeed(double speed){

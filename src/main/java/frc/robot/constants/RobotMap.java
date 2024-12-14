@@ -1,17 +1,28 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotMap {
 
     public static class SafetyMap {
-        public static final double kMaxSpeed = 6.0;
+        public static final double kMaxSpeed = 5.0;
         public static final double kMaxRotation = 1.0;
         public static final double kMaxAcceleration = 1.0;
+        public static final double kAutonMoveSpeed = 1.0;
         public static final double kMaxAngularAcceleration = 1.0;
+        public static final double kMaxAngularRate = Math.PI; // 3/4 of a rotation per second max angular velocity
+	    public static final double kAngularRateMultiplier = 2;
         public static final double kJoystickDeadband = 0.1;
         public static  double kMaxSpeedChange = 1;
         public static double kFollowerCommand = 6;
+
+        public static class SwerveConstants {
+            public static double kRotationP = 0.085; //0.07
+            public static double kRotationI = .000;//.0001
+            public static double kRotationD = .00;
+            public static double speedpercentage = 1.0;
+        }
 
         public static class FODC {
             public static final int LineCount = 72;
@@ -23,6 +34,8 @@ public class RobotMap {
     public static class UsbMap {
         public static final int DRIVER_CONTROLLER = 0;
         public static final int OPERATOR_CONTROLLER = 1;
+        public static CommandXboxController driverController = new CommandXboxController(DRIVER_CONTROLLER);
+        public static CommandXboxController operatorController = new CommandXboxController(OPERATOR_CONTROLLER);
     }
 
     // CAN IDs for Swerve Drive System
