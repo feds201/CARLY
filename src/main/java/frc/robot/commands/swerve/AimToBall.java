@@ -5,9 +5,9 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.ComandCenter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.camera.Back_Camera;
-import frc.robot.utils.ComandCenter;
 import frc.robot.utils.DrivetrainConstants;
 import frc.robot.utils.Smooth;
 
@@ -49,7 +49,7 @@ public class AimToBall extends Command {
     @Override
     public void initialize() {
         isEnnabled = ()-> true;
-        tab.addBoolean("AimToBallCommand", isEnnabled);
+        ComandCenter.addAimToBallCommand(isEnnabled);
         c_swerve.resetPID();
         rotationalPID.reset();
         strafePID.reset();

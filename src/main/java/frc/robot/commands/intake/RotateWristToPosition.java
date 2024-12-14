@@ -4,15 +4,15 @@
 
 package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.ComandCenter;
 import frc.robot.subsystems.intake.Wrist;
 
 public class RotateWristToPosition extends Command {
   /** Creates a new wristIn. */
   private final Wrist c_intake;
   private final double c_target;
-  private final boolean c_failure;
+  private boolean c_failure;
 
   public RotateWristToPosition(Wrist intake, double target) {
     c_intake = intake;
@@ -24,7 +24,8 @@ public class RotateWristToPosition extends Command {
     } else {
       c_failure = false;
     }
-    SmartDashboard.putBoolean("WRIST FAILURE", c_failure);
+
+    ComandCenter.addWristFailure(c_failure);
     // Use addRequirements() here to declare subsystem dependencies.
 
   }
@@ -49,6 +50,7 @@ public class RotateWristToPosition extends Command {
   @Override
   public void end(boolean interrupted) {
     c_intake.setWristVoltage(0.0);
+    c_failure = false;
   }
 
   // Returns true when the command should end.
