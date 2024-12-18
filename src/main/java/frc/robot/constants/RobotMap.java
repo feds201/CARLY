@@ -12,7 +12,7 @@ public class RobotMap {
         public static final double kAutonMoveSpeed = 1.0;
         public static final double kMaxAngularAcceleration = 1.0;
         public static final double kMaxAngularRate = Math.PI; // 3/4 of a rotation per second max angular velocity
-	    public static final double kAngularRateMultiplier = 2;
+	    public static final double kAngularRateMultiplier = 4;
         public static final double kJoystickDeadband = 0.1;
         public static  double kMaxSpeedChange = 1;
         public static double kFollowerCommand = 6;
@@ -51,7 +51,7 @@ public class RobotMap {
     }
 
     public static class ElevatorMap {
-        public static final int ELEVATOR_MOTOR = 8;
+        public static final int ELEVATOR_MOTOR = 52;
         public static final int ELEVATOR_SPEED = 0;
     }
 
@@ -60,6 +60,7 @@ public class RobotMap {
     public static class SensorMap {
         // Example: Add sensor ports (like encoders, gyros, etc.)
         public static final int GYRO_PORT = 0;
+        public static final int INTAKE_IR_SENSOR = 2;
         
     }
 
@@ -71,7 +72,7 @@ public class RobotMap {
         public static final double ballRadius = 9; // cm ; 3.5 inches
         public static final double targetHeight = .9825; // m ; 38.7 inches
         public static final double cameraHeight = .4064; // m ; 16 inches
-        public static final double cameraAngle = 0; // degrees
+        public static final double cameraAngle = 56; // degrees
 
 
         public static class CameraConfig {
@@ -97,19 +98,19 @@ public class RobotMap {
 }
 
 
-public static class IntakeMap {
+    public static class IntakeMap {
     public static final int INTAKE_MOTOR = 11;
     public static final int INTAKE_WRIST = 12;
-    public static final double K_INTAKE_NOTE_WHEEL_SPEED = -1;
-    public static final double K_SPIT_OUT_NOTE_WHEEL_SPEED = 1;
-    public static final double K_AMP_IN_WHEEL_SPEED = 1;
+    public static final double K_INTAKE_NOTE_WHEEL_SPEED = 1;
+    public static final double K_SPIT_OUT_NOTE_WHEEL_SPEED = -1;
+    public static final double K_AMP_IN_WHEEL_SPEED = -1;
     public static final double K_HANDOFF_NOTE_WHEEL_SPEED = 0.6;
     public static final double K_DISTANCE_SENSOR_DETECTED_DELAY = 0.35;
 
     public static class SensorConstants {
         public static final int INTAKE_BB_RECEIVER = 6;
         public static final int INTAKE_BB_TRANSMITTER = 7;
-        public static final int INTAKE_ROTATE_ENCODER = 2;
+        public static final int INTAKE_ROTATE_ENCODER = 0;
     }
 
     public static class WristPID {
@@ -121,9 +122,9 @@ public static class IntakeMap {
 
         /* TODO: Change these values after testing with Carly Intake */
         public static final double K_SPIT_OUT_POSITION = 201;
-        public static final double K_WRIST_FLOOR_POSITION = 308;
-        public static final double K_WRIST_HANDOFF_POSITION = 308;
-        public static final double K_WRIST_SHOOTER_FEEDER_SETPOINT = 94;
+        public static final double K_WRIST_FLOOR_POSITION = 182;
+        public static final double K_WRIST_HANDOFF_POSITION = 58.6;
+        public static final double K_WRIST_SHOOTER_FEEDER_SETPOINT = 60;
         public static double K_WRIST_OUT_OF_THE_WAY = 150;
 
          // TODO: Ideally all of the above positions should be based on this "home" position so we only have to change this

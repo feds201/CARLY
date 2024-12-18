@@ -44,10 +44,12 @@ public IntakeWheels(Subsystems part, String tabName) {
 
   @Override
   public boolean isHealthy() {
+    // SafetyManager.java has ! why? must fix but this should work in current state
     double motorTemp = intakeMotor.getMotorTemperature();
+    @SuppressWarnings("unused")
     double motorVoltage = intakeMotor.getBusVoltage();
-    if (motorTemp > 50) DriverStation.reportWarning("Intake motor temperature is too high", false);
-    if (motorTemp > 60 || motorVoltage < 10) return false;
+    if (motorTemp > 50) DriverStation.reportWarning("Intake motor temperature is too high", true);
+    if (motorTemp > 80) return false;
     
     return true;
   }

@@ -1,9 +1,9 @@
 package frc.robot.utils;
 
 public enum ObjectType {
-    APRIL_TAG("April Tag", "This object type is for AprilTags", "limelight-cam1", 480, 640, 0.0, 59.6, 45.7),
-    INFINITE_CHARGE_BALLS("Infinite Charge Balls", "This object type is for Infinite Charge Balls", "limelight", 480, 640, 0.0, 59.6, 45.7),
-    NOTE("Note", "This object type is for Notes", "limelight-cam2", 480, 640, 0.0, 59.6, 45.7);
+    APRIL_TAG("April Tag", "This object type is for AprilTags", "limelight-notes", 480, 640, 0.0, 59.6, 45.7),
+    INFINITE_CHARGE_BALLS("Infinite Charge Balls", "This object type is for Infinite Charge Balls", "limelight-notes", 480, 640, 0.0, 59.6, 45.7),
+    NOTE("Note", "This object type is for Notes", "limelight-notes", 480, 640, 0.0, 59.6, 45.7);
 
     private final String name;
     private final String description;

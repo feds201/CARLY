@@ -36,6 +36,10 @@ public class Elevator extends SubsystemABS {
         resetElevator();
     }
 
+    public void setElevator(double power){
+        elevatorMotor.set(power);
+    }
+
     private void resetElevator() {
         isEnabled = false;
         voltageValue = 0;
@@ -73,10 +77,7 @@ public class Elevator extends SubsystemABS {
             stopElevator();
         }
 
-        // Example output to console instead of SmartDashboard
-        System.out.println("Output Current: " + voltageValue);
-        System.out.println("Counter: " + counter);
-        System.out.println("Seconds: " + seconds);
+    
         
     }
 

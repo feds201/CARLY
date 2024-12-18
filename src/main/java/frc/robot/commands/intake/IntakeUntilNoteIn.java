@@ -17,10 +17,10 @@ public class IntakeUntilNoteIn extends SequentialCommandGroup {
   public IntakeUntilNoteIn(IntakeWheels intakeWheels, IntakeIRSensor irSensor, CommandXboxController driver, CommandXboxController operator) {
 
     addCommands(
-        new RunIntakeWheels(intakeWheels, () -> IntakeMap.K_INTAKE_NOTE_WHEEL_SPEED)
+        new RunIntakeWheels(intakeWheels, () -> IntakeMap.K_INTAKE_NOTE_WHEEL_SPEED/2)
             .until(irSensor::getBeamBroken),
         new ParallelDeadlineGroup(
             new WaitCommand(IntakeMap.K_DISTANCE_SENSOR_DETECTED_DELAY),
-            new RunIntakeWheels(intakeWheels, () -> IntakeMap.K_INTAKE_NOTE_WHEEL_SPEED)));
+            new RunIntakeWheels(intakeWheels, () -> IntakeMap.K_INTAKE_NOTE_WHEEL_SPEED/2)));
   }
 }

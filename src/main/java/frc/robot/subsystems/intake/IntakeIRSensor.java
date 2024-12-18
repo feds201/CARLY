@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems.intake;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.constants.RobotMap.SensorMap;
 import frc.robot.utils.SubsystemABS;
 import frc.robot.utils.Subsystems;
 
@@ -20,15 +23,15 @@ public class IntakeIRSensor extends SubsystemABS {
   }
 
   public boolean getBeamBroken() {
-    return receiverIntake.get();
+    return !receiverIntake.get();
   }
   
 
   @Override
   public void init() {
-    /*TODO: Verify the dio port for this sensor*/
+     tab.addBoolean("NoteTaken ", () -> getBeamBroken());
     try {
-      receiverIntake = new DigitalInput(5);
+      receiverIntake = new DigitalInput(SensorMap.INTAKE_IR_SENSOR);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -46,17 +49,16 @@ public class IntakeIRSensor extends SubsystemABS {
 
   @Override
   public boolean isHealthy() {
-    return true;
+    return receiverIntake != null;
   }
 
   @Override
   public void Failsafe() {
-    // TODO Auto-generated method stub
+    System.out.println("Intake IR Sensor is not healthy");
   }
 
   @Override
   public void periodic() {
-    // TODO Auto-generated method stub
   }
 
 }

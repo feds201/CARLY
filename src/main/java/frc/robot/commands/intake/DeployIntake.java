@@ -19,9 +19,9 @@ public class DeployIntake extends SequentialCommandGroup {
                 new ParallelDeadlineGroup(
                         new RotateWristToPosition(wrist, IntakeMap.WristPID.K_WRIST_FLOOR_POSITION),
                         new RunIntakeWheels(intakeWheels, () -> IntakeMap.K_INTAKE_NOTE_WHEEL_SPEED)),
+
+
                 new IntakeUntilNoteIn(intakeWheels, breakBeamSensorIntake, driver, operator),
-                new ParallelDeadlineGroup(
-                        new RotateWristToPosition(wrist, IntakeMap.WristPID.K_WRIST_FLOOR_POSITION),
-                        new RunIntakeWheels(intakeWheels, () -> 0)));
+                new ResetIntake(wrist, intakeWheels, breakBeamSensorIntake, driver, operator));
     }
 }

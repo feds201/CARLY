@@ -4,6 +4,7 @@
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Intake/AMP Pid Controller": "PIDController",
       "/Shuffleboard/Intake/PID Controller": "PIDController",
+      "/Shuffleboard/LiveWindow/Auton Chooser": "String Chooser",
       "/Shuffleboard/Swerve Drive/Robot Map": "Field2d",
       "/Shuffleboard/Tester/Aim at Ball": "Command",
       "/Shuffleboard/Tester/Deply Intake ": "Command",

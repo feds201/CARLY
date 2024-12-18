@@ -1,5 +1,12 @@
 package frc.robot;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.core.sym.Name;
+import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.elevator.*;
@@ -26,10 +33,12 @@ public class RobotContainer {
     private IntakeIRSensor intakeIRSensor;
     private CommandXboxController driverController;
     private CommandXboxController operatorController;
+    private SendableChooser<Command> autonChooser = new SendableChooser<>();
 
 
     public RobotContainer() {
 
+        double swerveSpeedMultiplier = 0.4;
         driverController = UsbMap.driverController;
         operatorController = UsbMap.operatorController;
 
@@ -67,8 +76,18 @@ public class RobotContainer {
         );
 
         
-        DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController));
+        // DrivetrainConstants.drivetrain.setDefaultCommand(new GenericDrivetrain(driverController));
+        DrivetrainConstants.drivetrain.setDefaultCommand(
 
+        DrivetrainConstants.drivetrain.applyRequest(() -> DrivetrainConstants.drive
+        .withVelocityX(-driverController.getLeftY() * SafetyMap.kMaxSpeed * SafetyMap.kMaxSpeedChange *swerveSpeedMultiplier)
+        .withVelocityY(-driverController.getLeftX() * SafetyMap.kMaxSpeed * SafetyMap.kMaxSpeedChange *swerveSpeedMultiplier)
+        .withRotationalRate(driverController.getRightX() * SafetyMap.kMaxAcceleration * SafetyMap.kAngularRateMultiplier))
+        );
+
+
+        setupPaths();
+        setupNamedCommands();
         configureBindings();
 
 
@@ -78,21 +97,93 @@ public class RobotContainer {
 
     private void configureBindings() { 
         driverController.start()
-        .onTrue(DrivetrainConstants.drivetrain.runOnce(DrivetrainConstants.drivetrain::seedFieldRelative));
-        driverController.a().whileTrue(new RotateWristBasic(wrist, ()-> -0.5));
-        driverController.b().whileTrue(new RunIntakeWheels(intakeWheels, ()-> 0.5));
-        driverController.leftTrigger().whileTrue(new AimToBall(DrivetrainConstants.drivetrain, backCamera));
+            .onTrue(DrivetrainConstants.drivetrain.runOnce(DrivetrainConstants.drivetrain::seedFieldRelative));
 
-        
-        /*DO NOT UN-COMMENT THIS LINE UNTIL INTAKE CONSTANTS HAVE BEEN FIXED!!! */
-        // driverController.a().whileTrue(new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController));
+        driverController.b()
+            .whileTrue(new RunIntakeWheels(intakeWheels, ()-> 0.25));
+
+        driverController.povUp()
+            .onTrue(new MoveElevator(elevator, 0.1))
+            .onFalse(new MoveElevator(elevator, 0.00));
+
+        driverController.povDown()
+            .onTrue(new MoveElevator(elevator, -0.2))
+            .onFalse(new MoveElevator(elevator, 0.00));
+
+        driverController.x()
+            .onFalse(new MoveElevator(elevator, 0.00));
+
+        driverController.rightTrigger()
+            .onTrue(new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController))
+            .onFalse(new ResetIntake(wrist, intakeWheels, intakeIRSensor, driverController, driverController));
+
+        driverController.leftTrigger()
+            .onTrue(new RotateWristToPosition(wrist, IntakeMap.WristPID.K_WRIST_FLOOR_POSITION))
+            .onFalse(new RotateWristToPosition(wrist, IntakeMap.WristPID.K_WRIST_SHOOTER_FEEDER_SETPOINT));
+
+        driverController.leftBumper()
+            .onTrue(new RotateWristToPositionInfinite(wrist, IntakeMap.WristPID.K_WRIST_HANDOFF_POSITION));
+
+        driverController.y()
+            .onTrue(new AimToBall(DrivetrainConstants.drivetrain, backCamera));
     }
 
+    
+    private void setupNamedCommands() {
+        NamedCommands.registerCommand(
+            "Rotate Intake Wheels", 
+            new RunIntakeWheels(intakeWheels, ()-> 0.5)
+        );
+        NamedCommands.registerCommand(
+            "Rotate Wrist", 
+            new RotateWristBasic(wrist, ()-> -0.5)
+        );
+        NamedCommands.registerCommand(
+            "Deploy Intake", 
+            new DeployIntake(wrist, intakeWheels, intakeIRSensor, driverController, operatorController)
+        );
+        NamedCommands.registerCommand(
+            "Intake Until Note In", 
+            new IntakeUntilNoteIn(intakeWheels, intakeIRSensor, driverController, operatorController)
+        );
+        NamedCommands.registerCommand(
+            "Aim at Ball", 
+            new AimToBall(DrivetrainConstants.drivetrain, backCamera)
+        );
+        NamedCommands.registerCommand(
+            "Handoff", 
+            new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController)
+        );
+        NamedCommands.registerCommand(
+            "Move Elevator Up", 
+            new ElevatorMoveLimit()
+        );
+        NamedCommands.registerCommand(
+            "Field Relative", 
+            DrivetrainConstants.drivetrain.runOnce(DrivetrainConstants.drivetrain::seedFieldRelative)
+        );
 
-    public Command getAutonomousCommand() {return null; }
+    }
 
+    public void setupPaths() {
+        autonChooser.setDefaultOption("Do Nothing", null);
+        autonChooser.addOption("Follow Path", DrivetrainConstants.drivetrain.getAutoPath("Test Path"));
+        autonChooser.addOption("Rotate Intake Wheels", NamedCommands.getCommand("Rotate Intake Wheels"));
+        autonChooser.addOption("Rotate Wrist", NamedCommands.getCommand("Rotate Wrist"));
+        autonChooser.addOption("Deploy Intake", NamedCommands.getCommand("Deploy Intake"));
+        autonChooser.addOption("Intake Until Note In", NamedCommands.getCommand("Intake Until Note In"));
+        autonChooser.addOption("Aim at Ball", NamedCommands.getCommand("Aim at Ball"));
+        autonChooser.addOption("Handoff", NamedCommands.getCommand("Handoff"));
+        autonChooser.addOption("Move Elevator Up", NamedCommands.getCommand("Move Elevator Up"));
+        autonChooser.addOption("Field Relative", NamedCommands.getCommand("Field Relative"));
+        Shuffleboard.getTab(Subsystems.LIVEWINDOW.getNetworkTable()).add("Auton Chooser",autonChooser) .withSize(2, 1).withProperties(Map.of("position", "0, 0"));
+    }
 
-//     DO NOT REMOVE
+    public Command getAutonomousCommand() {
+        return autonChooser.getSelected();
+    }
+
+    // DO NOT REMOVE
     public SubsystemABS[] SafeGuardSystems() {
         return new SubsystemABS[] {
                 swerveSubsystem ,
@@ -114,6 +205,13 @@ public class RobotContainer {
             "Handoff ", new HandoffToElevator(wrist, intakeWheels, intakeIRSensor, driverController, operatorController),
             "Test Wrist", new RotateWristBasic(wrist, ()-> -0.5),
             "Test Intake Wheels", new RunIntakeWheels(intakeWheels, ()-> 0.5)
+        };
+    }
+
+    public Object[] TestAutonCommands() {
+        return new Object[] {
+            "Follow Path", DrivetrainConstants.drivetrain.getAutoPath("Test Path"),
+            "Follow Path 2", DrivetrainConstants.drivetrain.getAutoPath("Test Path 2"),
         };
     }
 

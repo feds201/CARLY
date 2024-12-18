@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class ComandCenter {
-    public static ShuffleboardTab tab;
+    public static ShuffleboardTab tab = Shuffleboard.getTab("Comand Center");
 
     private static boolean wristFailureAdded = false;
     private static boolean AimToBallAdded = false;
