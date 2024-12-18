@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.SubsystemABS;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +24,6 @@ public class SafetyManager extends SubsystemBase {
 
     public static void init() {
         safetyTab = Shuffleboard.getTab("Safety");
-        
-
-
     }
 
     @Override
@@ -47,6 +43,7 @@ public class SafetyManager extends SubsystemBase {
             if (!subsystem.isHealthy()) {
                 System.out.println(subsystem.getName() + " is not healthy" + " at " + System.currentTimeMillis());
                 DriverStation.reportError(subsystem.getName() + " is not healthy", false);
+                subsystem.Failsafe();
             }
         }
     }

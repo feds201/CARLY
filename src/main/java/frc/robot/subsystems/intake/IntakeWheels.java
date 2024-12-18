@@ -8,67 +8,63 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.constants.RobotMap;
-import frc.robot.subsystems.SubsystemABC;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.constants.RobotMap.IntakeMap;
+import frc.robot.utils.SubsystemABS;
+import frc.robot.utils.Subsystems;
 
-public class IntakeWheels extends SubsystemABC {
-  private final CANSparkMax intakeWheel;
+public class IntakeWheels extends SubsystemABS {
+  private CANSparkMax intakeMotor;
+  private DoubleEntry intakeSpeed;
+  private ShuffleboardTab tab;
 
-  private DoubleEntry intakeVoltage;
+public IntakeWheels(Subsystems part, String tabName) {
+  super(part, tabName);
+  tab = getTab();
+  
+  tab.addNumber("intake bus voltage",() -> intakeMotor.getBusVoltage());
+  tab.addNumber("intake motor temperature",() -> intakeMotor.getMotorTemperature());
+}
 
-  /** Creates a new intake. */
-  public IntakeWheels() {
-    super();
-
-    intakeWheel = new CANSparkMax(RobotMap.IntakeMap.kIntakeWheels, MotorType.kBrushless);
-
-    setupNetworkTables("intake");
-
-    intakeVoltage = ntTable.getDoubleTopic("wheels_voltage").getEntry(0);
-
-    setupShuffleboard();
-    seedNetworkTables();
+  @Override
+  public void init() {
+  intakeMotor = new CANSparkMax(IntakeMap.INTAKE_MOTOR, MotorType.kBrushless);
+  intakeSpeed = ntTable.getDoubleTopic("wheels_voltage").getEntry(0);
   }
 
   @Override
-  public void setupShuffleboard() {
+  public void periodic() {}
 
+  @Override
+  public void simulationPeriodic() {}
+
+  @Override
+  public void setDefaultCommand() {}
+
+  @Override
+  public boolean isHealthy() {
+    // SafetyManager.java has ! why? must fix but this should work in current state
+    double motorTemp = intakeMotor.getMotorTemperature();
+    @SuppressWarnings("unused")
+    double motorVoltage = intakeMotor.getBusVoltage();
+    if (motorTemp > 50) DriverStation.reportWarning("Intake motor temperature is too high", true);
+    if (motorTemp > 80) return false;
+    
+    return true;
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    writePeriodicOutputs();
-
-    SmartDashboard.putNumber("intake bus voltage", intakeWheel.getBusVoltage());
-    SmartDashboard.putNumber("intake motor temperature", intakeWheel.getMotorTemperature());
+  public void Failsafe() {
+    intakeSpeed.set(0);
+    intakeMotor.set(0);
   }
 
-  @Override
-  public void writePeriodicOutputs() {
-
+  public void setMotorSpeed(double speed){
+    intakeMotor.set(speed);
+    intakeSpeed.set(speed);
   }
 
-  @Override
-  public void seedNetworkTables() {
-    setIntakeWheels(0);
-    getIntakeWheels();
-  }
-
-  // GETTERS
-  public double getIntakeWheels() {
-    return intakeVoltage.get();
-  }
-
-  private DoubleLogEntry intakeVoltageLog = new DoubleLogEntry(log, "/intake/target");
-
-  // SETTERS
-  public void setIntakeWheels(double voltage) {
-    intakeVoltage.set(voltage);
-    intakeVoltageLog.append(voltage);
-
-    intakeWheel.set(voltage);
-  }
+  
+  
 }

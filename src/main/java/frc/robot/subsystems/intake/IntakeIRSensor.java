@@ -4,54 +4,61 @@
 
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.networktables.BooleanEntry;
-import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.constants.DIOConstants.*;
-import frc.robot.subsystems.SubsystemABC;
+import java.util.function.BooleanSupplier;
 
-public class IntakeIRSensor extends SubsystemABC {
+import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.constants.RobotMap.SensorMap;
+import frc.robot.utils.SubsystemABS;
+import frc.robot.utils.Subsystems;
+
+public class IntakeIRSensor extends SubsystemABS {
   /** Creates a new BreakBeamSensor. */
   // private final DigitalInput transmitter;
-  private final DigitalInput receiverIntake;
-  private final BooleanEntry beamBrokenIntake;
+  private  DigitalInput receiverIntake;
+  public IntakeIRSensor(Subsystems part, String tabName) {
+    super(part, tabName);  
+    ntTable.getEntry("Intake IR Sensor"); 
+    ntTable.getEntry(tabName);
+    
+  }
 
-  public IntakeIRSensor() {
-    setupNetworkTables("irsensor_intake");
+  public boolean getBeamBroken() {
+    return !receiverIntake.get();
+  }
+  
 
-    // transmitter = new DigitalInput(SensorConstants.breakBeamTransmitterPort);
-    receiverIntake = new DigitalInput(SensorConstants.intakeBreakBeamReceiverPort);
-
-    beamBrokenIntake = ntTable.getBooleanTopic("intake_loaded").getEntry(true);
-
-    setupShuffleboard();
-    seedNetworkTables();
+  @Override
+  public void init() {
+     tab.addBoolean("NoteTaken ", () -> getBeamBroken());
+    try {
+      receiverIntake = new DigitalInput(SensorMap.INTAKE_IR_SENSOR);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
-  public void setupShuffleboard() {
-    tab.add("BreakBeam", receiverIntake);
+  public void simulationPeriodic() {
+   
+  }
+
+  @Override
+  public void setDefaultCommand() {
+    
+  }
+
+  @Override
+  public boolean isHealthy() {
+    return receiverIntake != null;
+  }
+
+  @Override
+  public void Failsafe() {
+    System.out.println("Intake IR Sensor is not healthy");
   }
 
   @Override
   public void periodic() {
-    writePeriodicOutputs();
-  }
-
-  @Override
-  public void seedNetworkTables() {
-  }
-
-  @Override
-  public void writePeriodicOutputs() {
-    readBeamBroken();
-  }
-
-  public void readBeamBroken() {
-    beamBrokenIntake.set(!receiverIntake.get());
-  }
-
-  public boolean getBeamBroken() {
-    return beamBrokenIntake.get();
   }
 
 }

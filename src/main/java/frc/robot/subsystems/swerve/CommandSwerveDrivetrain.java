@@ -18,10 +18,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.constants.SwerveConstants;
+import frc.robot.constants.RobotMap.SafetyMap.SwerveConstants;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
 import java.util.function.Supplier;
@@ -37,8 +36,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     public static final PIDController pid = new PIDController(SwerveConstants.kRotationP  , SwerveConstants.kRotationI, SwerveConstants.kRotationD);
-//    public static final PIDController pid = new PIDController(0.04, .0009, .009);
-//    public static final PIDController pid =  new PIDController(.06135, .00, .00);
+
 
 
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
@@ -121,7 +119,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
     public double getPIDRotation(double currentX) {
-        SmartDashboard.putNumber("PID Current", currentX);
         return pid.calculate(currentX);
     }
 
@@ -146,11 +143,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     @Override
     public void periodic() {
-        SmartDashboard.getNumber("PID:Error", pid.getPositionError());
-        SmartDashboard.getBoolean("PID: ISthere", pid.atSetpoint());
-        SmartDashboard.getNumber("PID: P", pid.getP());
-        SmartDashboard.getNumber("PID: I", pid.getI());
-        SmartDashboard.getNumber("PID: D", pid.getD());
         /* Periodically try to apply the operator perspective */
         /*
          * If we haven't applied the operator perspective before, then we should apply
@@ -168,14 +160,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
          * This ensures driving behavior doesn't change until an explicit disable event
          * occurs during testing
          */
-        // if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-        // DriverStation.getAlliance().ifPresent((allianceColor) -> {
-        // this.setOperatorPerspectiveForward(
-        // allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
-        // : BlueAlliancePerspectiveRotation);
-        // hasAppliedOperatorPerspective = true;
-        // });i
-        // }
+        if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+        DriverStation.getAlliance().ifPresent((allianceColor) -> {
+        this.setOperatorPerspectiveForward(
+        allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
+        : BlueAlliancePerspectiveRotation);
+        hasAppliedOperatorPerspective = true;
+        });
+        }
 
 
     }

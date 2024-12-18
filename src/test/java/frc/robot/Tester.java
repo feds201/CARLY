@@ -20,13 +20,14 @@ public class Tester {
                 try {
                     // Get the CAN ID of the motor
                     int canId = field.getInt(motorClass);
-                    // Create a TalonFX motor instance
-                    TalonFX motor = new TalonFX(canId);
-                    // Check if the motor is alive
-                    boolean isAlive = motor.isAlive();
+                    try (// Create a TalonFX motor instance
+                    TalonFX motor = new TalonFX(canId)) {
+                        // Check if the motor is alive
+                        boolean isAlive = motor.isAlive();
 
-                    // Assert that the motor is alive
-                    assertTrue(isAlive , "Motor with CAN ID " + canId + " is not alive.");
+                        // Assert that the motor is alive
+                        assertTrue(isAlive , "Motor with CAN ID " + canId + " is not alive.");
+                    }
                 } catch ( IllegalAccessException e ) {
                     e.printStackTrace();
                 }

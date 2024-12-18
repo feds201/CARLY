@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.ComandCenter;
+import frc.robot.utils.AutonTester;
 import frc.robot.utils.RobotTester;
 import frc.robot.utils.SafetyManager;
 
@@ -34,6 +36,7 @@ public class Robot extends TimedRobot
 
         robotContainer = new RobotContainer();
         new SafetyManager(robotContainer.SafeGuardSystems());
+        ComandCenter.init();
 
 
         // Start logging data log
@@ -115,6 +118,7 @@ public class Robot extends TimedRobot
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
         new RobotTester(robotContainer.TestCommands());
+        new AutonTester(robotContainer.TestAutonCommands());
     }
     
     /** This method is called periodically during test mode. */

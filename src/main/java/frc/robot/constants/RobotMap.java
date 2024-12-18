@@ -1,16 +1,30 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 public class RobotMap {
 
     public static class SafetyMap {
-        public static final double kMaxSpeed = 1.0;
+        public static final double kMaxSpeed = 5.0;
         public static final double kMaxRotation = 1.0;
         public static final double kMaxAcceleration = 1.0;
+        public static final double kAutonMoveSpeed = 1.0;
         public static final double kMaxAngularAcceleration = 1.0;
+        public static final double kMaxAngularRate = Math.PI; // 3/4 of a rotation per second max angular velocity
+	    public static final double kAngularRateMultiplier = 4;
         public static final double kJoystickDeadband = 0.1;
-        public static final double kMaxSpeedChange = 0.5;
+        public static  double kMaxSpeedChange = 1;
+        public static double kFollowerCommand = 6;
 
-        public class FODC {
+        public static class SwerveConstants {
+            public static double kRotationP = 0.085; //0.07
+            public static double kRotationI = .000;//.0001
+            public static double kRotationD = .00;
+            public static double speedpercentage = 1.0;
+        }
+
+        public static class FODC {
             public static final int LineCount = 72;
             public static double AngleDiff = 0.0;
         }
@@ -20,6 +34,8 @@ public class RobotMap {
     public static class UsbMap {
         public static final int DRIVER_CONTROLLER = 0;
         public static final int OPERATOR_CONTROLLER = 1;
+        public static CommandXboxController driverController = new CommandXboxController(DRIVER_CONTROLLER);
+        public static CommandXboxController operatorController = new CommandXboxController(OPERATOR_CONTROLLER);
     }
 
     // CAN IDs for Swerve Drive System
@@ -35,28 +51,93 @@ public class RobotMap {
     }
 
     public static class ElevatorMap {
-        public static final int ELEVATOR_MOTOR = 8;
+        public static final int ELEVATOR_MOTOR = 52;
+        public static final int ELEVATOR_SPEED = 0;
     }
 
-    public static class LauncherMap
-    {
-        public static final int LAUNCHER_MOTOR = 9;
-        public static final int TURRET_MOTOR = 10;
-        public static final int LAUNCHER_SOLENOID_FORWARD = 3;
-        public static final int LAUNCHER_SOLENOID_REVERSE = 4;
-    }
 
     // Additional motor controllers or sensors could be added here
     public static class SensorMap {
         // Example: Add sensor ports (like encoders, gyros, etc.)
         public static final int GYRO_PORT = 0;
+        public static final int INTAKE_IR_SENSOR = 2;
+        
     }
 
-
-    public static class IntakeMap{
-        //Make sure to change these to correct!
-        public static final int kIntakeWheels = 50;       // Rev
-        public static final int kIntakeWrist = 55;        // Rev
-    }
     // You can add more mappings for other subsystems like intake, shooter, etc.
+
+    public static class VisionMap {
+        /*TODO: Change these values to match the actual value for the camera*/ 
+        
+        public static final double ballRadius = 9; // cm ; 3.5 inches
+        public static final double targetHeight = .9825; // m ; 38.7 inches
+        public static final double cameraHeight = .4064; // m ; 16 inches
+        public static final double cameraAngle = 56; // degrees
+
+
+        public static class CameraConfig {
+            public static class BackCam {
+                public static final int CAMERA_HEIGHT = 480;
+                public static final int CAMERA_WIDTH = 640;
+                public static final double TARGET_HEIGHT = 0.0;
+                public static final double HORIZONTAL_FOV = 59.6;
+                public static final double VERTICAL_FOV = 45.7;
+            }
+        
+            public static class FrontCam {
+                public static final int CAMERA_HEIGHT = 480;
+                public static final int CAMERA_WIDTH = 640;
+                public static final double TARGET_HEIGHT = 0.0;
+                public static final double HORIZONTAL_FOV = 59.6;
+                public static final double VERTICAL_FOV = 45.7;
+            }
+        }
+        
+
+    
+}
+
+
+    public static class IntakeMap {
+    public static final int INTAKE_MOTOR = 11;
+    public static final int INTAKE_WRIST = 12;
+    public static final double K_INTAKE_NOTE_WHEEL_SPEED = 1;
+    public static final double K_SPIT_OUT_NOTE_WHEEL_SPEED = -1;
+    public static final double K_AMP_IN_WHEEL_SPEED = -1;
+    public static final double K_HANDOFF_NOTE_WHEEL_SPEED = 0.6;
+    public static final double K_DISTANCE_SENSOR_DETECTED_DELAY = 0.35;
+
+    public static class SensorConstants {
+        public static final int INTAKE_BB_RECEIVER = 6;
+        public static final int INTAKE_BB_TRANSMITTER = 7;
+        public static final int INTAKE_ROTATE_ENCODER = 0;
+    }
+
+    public static class WristPID {
+        public static final double KP = 0.003;
+        public static final double KI = 0.001;
+        public static final double KD = 0.0;
+        public static final double KIZONE = Double.POSITIVE_INFINITY;
+        public static final double K_ROTATION_TOLERANCE = 10;
+
+        /* TODO: Change these values after testing with Carly Intake */
+        public static final double K_SPIT_OUT_POSITION = 201;
+        public static final double K_WRIST_FLOOR_POSITION = 182;
+        public static final double K_WRIST_HANDOFF_POSITION = 58.6;
+        public static final double K_WRIST_SHOOTER_FEEDER_SETPOINT = 60;
+        public static double K_WRIST_OUT_OF_THE_WAY = 150;
+
+         // TODO: Ideally all of the above positions should be based on this "home" position so we only have to change this
+
+        public static PIDController getWristPID() {
+            PIDController pid = new PIDController(KP, KI, KD);
+            pid.setIZone(KIZONE);
+            pid.setTolerance(K_ROTATION_TOLERANCE);
+            return pid;
+        }
+
+    }
+
+
+}
 }
