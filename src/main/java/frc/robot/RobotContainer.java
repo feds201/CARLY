@@ -82,12 +82,11 @@ public class RobotContainer {
         DrivetrainConstants.drivetrain.applyRequest(() -> DrivetrainConstants.drive
         .withVelocityX(-driverController.getLeftY() * SafetyMap.kMaxSpeed * SafetyMap.kMaxSpeedChange *swerveSpeedMultiplier)
         .withVelocityY(-driverController.getLeftX() * SafetyMap.kMaxSpeed * SafetyMap.kMaxSpeedChange *swerveSpeedMultiplier)
-        .withRotationalRate(driverController.getRightX() * SafetyMap.kMaxAcceleration * SafetyMap.kAngularRateMultiplier))
+        .withRotationalRate(-driverController.getRightX() * SafetyMap.kMaxAcceleration * SafetyMap.kAngularRateMultiplier))
         );
 
-
-        setupPaths();
         setupNamedCommands();
+        setupPaths();
         configureBindings();
 
 
@@ -99,15 +98,15 @@ public class RobotContainer {
         driverController.start()
             .onTrue(DrivetrainConstants.drivetrain.runOnce(DrivetrainConstants.drivetrain::seedFieldRelative));
 
-        driverController.b()
-            .whileTrue(new RunIntakeWheels(intakeWheels, ()-> 0.25));
+        // driverController.b()
+        //     .whileTrue(new RunIntakeWheels(intakeWheels, ()-> 0.25));
 
-        driverController.povUp()
-            .onTrue(new MoveElevator(elevator, 0.1))
+        driverController.leftBumper()
+            .whileTrue(new MoveElevator(elevator, 0.15))
             .onFalse(new MoveElevator(elevator, 0.00));
 
-        driverController.povDown()
-            .onTrue(new MoveElevator(elevator, -0.2))
+        driverController.rightBumper()
+            .whileTrue(new MoveElevator(elevator, -0.2))
             .onFalse(new MoveElevator(elevator, 0.00));
 
         driverController.x()
@@ -121,11 +120,11 @@ public class RobotContainer {
             .onTrue(new RotateWristToPosition(wrist, IntakeMap.WristPID.K_WRIST_FLOOR_POSITION))
             .onFalse(new RotateWristToPosition(wrist, IntakeMap.WristPID.K_WRIST_SHOOTER_FEEDER_SETPOINT));
 
-        driverController.leftBumper()
-            .onTrue(new RotateWristToPositionInfinite(wrist, IntakeMap.WristPID.K_WRIST_HANDOFF_POSITION));
+        // driverController.leftBumper()
+            // .onTrue(new RotateWristToPositionInfinite(wrist, IntakeMap.WristPID.K_WRIST_HANDOFF_POSITION));
 
-        driverController.y()
-            .onTrue(new AimToBall(DrivetrainConstants.drivetrain, backCamera));
+        // driverController.y()
+            // .onTrue(new AimToBall(DrivetrainConstants.drivetrain, backCamera));
     }
 
     
