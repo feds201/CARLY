@@ -70,9 +70,9 @@ public class RobotMap {
         /*TODO: Change these values to match the actual value for the camera*/ 
         
         public static final double ballRadius = 9; // cm ; 3.5 inches
-        public static final double targetHeight = .9825; // m ; 38.7 inches
-        public static final double cameraHeight = .4064; // m ; 16 inches
-        public static final double cameraAngle = 56; // degrees
+        public static final double targetHeight = 1.6; // m ; 38.7 inches
+        public static final double cameraHeight = .6; // m ; 16 inches
+        public static final double cameraAngle = 40; // degrees
 
 
         public static class CameraConfig {
@@ -91,6 +91,11 @@ public class RobotMap {
                 public static final double HORIZONTAL_FOV = 59.6;
                 public static final double VERTICAL_FOV = 45.7;
             }
+
+            public static double tx;
+            public static double ty;
+            public static double ta;
+            public static double distance;
         }
         
 

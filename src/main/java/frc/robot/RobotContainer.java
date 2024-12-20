@@ -102,11 +102,11 @@ public class RobotContainer {
         //     .whileTrue(new RunIntakeWheels(intakeWheels, ()-> 0.25));
 
         driverController.leftBumper()
-            .whileTrue(new MoveElevator(elevator, 0.15))
+            .whileTrue(new MoveElevator(elevator, 0.3))
             .onFalse(new MoveElevator(elevator, 0.00));
 
         driverController.rightBumper()
-            .whileTrue(new MoveElevator(elevator, -0.2))
+            .whileTrue(new MoveElevator(elevator, -0.4))
             .onFalse(new MoveElevator(elevator, 0.00));
 
         driverController.x()
@@ -124,7 +124,7 @@ public class RobotContainer {
             // .onTrue(new RotateWristToPositionInfinite(wrist, IntakeMap.WristPID.K_WRIST_HANDOFF_POSITION));
 
         // driverController.y()
-            // .onTrue(new AimToBall(DrivetrainConstants.drivetrain, backCamera));
+        //     .onTrue(new AimToBall(DrivetrainConstants.drivetrain, backCamera));
     }
 
     
