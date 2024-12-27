@@ -7,7 +7,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.RobotMap.VisionMap.CameraConfig;
 import frc.robot.utils.ObjectType;
 import frc.robot.utils.Subsystems;
 import frc.robot.utils.VisionABC;
@@ -19,40 +21,50 @@ public class Back_Camera extends VisionABC {
 	private ObjectType objectType;
 	private NetworkTable table;
 
-	private DoubleSupplier tx;
-	private DoubleSupplier ty;
-	private DoubleSupplier ta;
+	// private DoubleSupplier tx;
+	// private DoubleSupplier ty;
+	// private DoubleSupplier ta;
+	public double tx;
+	public double ty;
+	public double ta;
 
 	public Back_Camera(Subsystems part, String tabName) {
 		super();
 		objectType = ObjectType.INFINITE_CHARGE_BALLS;
 		object = new VisionObject(0,0,0,objectType);
 		layout = tab.getLayout(objectType.getName(), "List Layout");
-		table = NetworkTableInstance.getDefault().getTable(objectType.getNetworkTable());
+		table = NetworkTableInstance.getDefault().getTable("limelight-notes");
 
-		layout.addNumber("tx", tx);
-		layout.addNumber("ty", ty);
-		layout.addNumber("ta", ta);
+		// layout.addNumber("tx", tx);
+		// layout.addNumber("ty", ty);
+		// layout.addNumber("ta", ta);
 	}
 
 		@Override
 	public void init() {
-		tx = () -> 0.0;
-		ty = () -> 0.0;
-		ta = () -> 0.0;
+		// tx = () -> 0.0;
+		// ty = () -> 0.0;
+		// ta = () -> 0.0;
+	
+
 	}
 
 	@Override
 	public void periodic() {
+		SmartDashboard.putNumber("tx", table.getEntry("tx").getDouble(0));
+
 			object.update(
 				table.getEntry("tx").getDouble(0.0),
 				table.getEntry("ty").getDouble(0.0),
 				table.getEntry("ta").getDouble(0.0)
 				);
-
-			tx = () -> object.getX();
-			ty = () -> object.getY();
-			ta = () -> object.getArea();
+			CameraConfig.tx = table.getEntry("tx").getDouble(0.0);
+			CameraConfig.ty = table.getEntry("ty").getDouble(0.0);
+			CameraConfig.distance = object.getDistance();
+			// tx = () -> object.getX();
+			// ty = () -> object.getY();
+			// ta = () -> object.getArea();
+			SmartDashboard.putNumber("Dista", CameraConfig.distance );
 		
 	}
 
@@ -102,9 +114,11 @@ public class Back_Camera extends VisionABC {
 				Math.random() * 100
 				);
 
-			tx = () -> object.getX();
-			ty = () -> object.getY();
-			ta = () -> object.getArea();
+				
+
+			// tx = () -> object.getX();
+			// ty = () -> object.getY();
+			// ta = () -> object.getArea();
 		
 	}
 
